@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kolor_klash/theme/app_theme.dart';
 import 'package:kolor_klash/theme/app_colors.dart';
+import 'tile_container.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -153,7 +154,7 @@ class _GameScreenState extends State<GameScreen>
                 childAspectRatio: 1.0,
               ),
               itemCount: 9,
-              itemBuilder: (context, index) => _buildGridTile(index),
+              itemBuilder: (context, index) => TileContainer(tileNumber: index + 1),
             ),
           ),
         );
@@ -161,28 +162,6 @@ class _GameScreenState extends State<GameScreen>
     );
   }
 
-  Widget _buildGridTile(int index) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.whiteOpacity(0.2),
-          width: 1,
-        ),
-        color: AppColors.whiteOpacity(0.08),
-      ),
-      child: Center(
-        child: Text(
-          '${index + 1}',
-          style: TextStyle(
-            fontSize: 16,
-            color: AppColors.whiteOpacity(0.4),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildDeckSection() {
     return Column(
