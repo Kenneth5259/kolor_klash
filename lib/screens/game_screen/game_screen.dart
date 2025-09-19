@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kolor_klash/theme/app_theme.dart';
 import 'package:kolor_klash/theme/app_colors.dart';
 import 'tile_container.dart';
+import 'game_tile.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -203,7 +204,7 @@ class _GameScreenState extends State<GameScreen>
                       SizedBox(
                         width: deckTileSize,
                         height: deckTileSize,
-                        child: _buildDeckTile(i),
+                        child: GameTile(tileId: 'D${i + 1}'),
                       ),
                     ],
                   ],
@@ -216,28 +217,6 @@ class _GameScreenState extends State<GameScreen>
     );
   }
 
-  Widget _buildDeckTile(int index) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.whiteOpacity(0.3),
-          width: 1,
-        ),
-        color: AppColors.whiteOpacity(0.1),
-      ),
-      child: Center(
-        child: Text(
-          'D${index + 1}',
-          style: TextStyle(
-            fontSize: 14,
-            color: AppColors.whiteOpacity(0.6),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildActionButtons() {
     return Row(
