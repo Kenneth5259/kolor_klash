@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kolor_klash/theme/app_theme.dart';
 import 'package:kolor_klash/theme/app_colors.dart';
+import 'package:kolor_klash/state/game_bloc.dart';
+import 'package:kolor_klash/state/game_state.dart';
+import 'package:kolor_klash/state/game_event.dart';
 import 'tile_container.dart';
-import 'game_tile.dart';
+import 'game_tile.dart' show GameTileWidget;
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
+
+  // Static method to create the screen with BlocProvider
+  static Widget create() {
+    return BlocProvider(
+      create: (context) => GameBloc()..add(GameStarted()),
+      child: const GameScreen(),
+    );
+  }
 }
 
 class _GameScreenState extends State<GameScreen>
@@ -65,56 +77,62 @@ class _GameScreenState extends State<GameScreen>
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Back Button
-        IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: AppColors.whiteOpacity(0.8),
-            size: 24,
-          ),
-        ),
+    return BlocBuilder<GameBloc, GameState>(
+      builder: (context, state) {
+        final score = state is GameInProgress ? state.score : 0;
 
-        // Score
-        Column(
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'SCORE',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.whiteOpacity(0.6),
-                letterSpacing: 1.0,
-                fontWeight: FontWeight.w500,
+            // Back Button
+            IconButton(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.whiteOpacity(0.8),
+                size: 24,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              '1,250',
-              style: TextStyle(
-                fontSize: 24,
-                color: AppColors.white,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.0,
+
+            // Score
+            Column(
+              children: [
+                Text(
+                  'SCORE',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.whiteOpacity(0.6),
+                    letterSpacing: 1.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  score.toString(),
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ],
+            ),
+
+            // Menu Button
+            IconButton(
+              onPressed: () {
+                context.read<GameBloc>().add(GameReset());
+              },
+              icon: Icon(
+                Icons.refresh,
+                color: AppColors.whiteOpacity(0.8),
+                size: 24,
               ),
             ),
           ],
-        ),
-
-        // Menu Button
-        IconButton(
-          onPressed: () {
-            // Show game menu
-          },
-          icon: Icon(
-            Icons.menu,
-            color: AppColors.whiteOpacity(0.8),
-            size: 24,
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -125,39 +143,49 @@ class _GameScreenState extends State<GameScreen>
   }
 
   Widget _buildGameGrid() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final tileSize = _calculateTileSize(constraints.maxWidth);
-        final gridSize = tileSize * 3 + 16; // 3 tiles + 2 gaps
-        final containerSize = gridSize + 32; // grid + padding on all sides
+    return BlocBuilder<GameBloc, GameState>(
+      builder: (context, state) {
+        if (state is! GameInProgress) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-        return Container(
-          width: containerSize,
-          height: containerSize, // Make the container significantly shorter
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.whiteOpacity(0.1),
-              width: 2,
-            ),
-            color: AppColors.whiteOpacity(0.05),
-          ),
-          child: SizedBox(
-            width: gridSize,
-            height: gridSize,
-            child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 1.0,
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final tileSize = _calculateTileSize(constraints.maxWidth);
+            final gridSize = tileSize * 3 + 16; // 3 tiles + 2 gaps
+            final containerSize = gridSize + 32; // grid + padding on all sides
+
+            return Container(
+              width: containerSize,
+              height: containerSize,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.whiteOpacity(0.1),
+                  width: 2,
+                ),
+                color: AppColors.whiteOpacity(0.05),
               ),
-              itemCount: 9,
-              itemBuilder: (context, index) => TileContainer(tileNumber: index + 1),
-            ),
-          ),
+              child: SizedBox(
+                width: gridSize,
+                height: gridSize,
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 1.0,
+                  ),
+                  itemCount: 9,
+                  itemBuilder: (context, index) => TileContainerWidget(
+                    tileContainer: state.grid[index],
+                  ),
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -165,55 +193,63 @@ class _GameScreenState extends State<GameScreen>
 
 
   Widget _buildDeckSection() {
-    return Column(
-      children: [
-        Text(
-          'DECK',
-          style: TextStyle(
-            fontSize: 14,
-            color: AppColors.whiteOpacity(0.6),
-            letterSpacing: 2.0,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.whiteOpacity(0.1),
-              width: 2,
-            ),
-            color: AppColors.whiteOpacity(0.05),
-          ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              // Calculate tile size to fit within this container's available width
-              final availableWidth = constraints.maxWidth; // Already accounts for container padding
-              final tileSpacing = 16.0; // 2 gaps of 8px
-              final deckTileSize = (availableWidth - tileSpacing) / 3;
+    return BlocBuilder<GameBloc, GameState>(
+      builder: (context, state) {
+        if (state is! GameInProgress) {
+          return const SizedBox.shrink();
+        }
 
-              return SizedBox(
-                height: deckTileSize, // Make container height match tile size
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (int i = 0; i < 3; i++) ...[
-                      if (i > 0) const SizedBox(width: 8),
-                      SizedBox(
-                        width: deckTileSize,
-                        height: deckTileSize,
-                        child: GameTile(tileId: 'D${i + 1}'),
-                      ),
-                    ],
-                  ],
+        return Column(
+          children: [
+            Text(
+              'DECK',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.whiteOpacity(0.6),
+                letterSpacing: 2.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.whiteOpacity(0.1),
+                  width: 2,
                 ),
-              );
-            },
-          ),
-        ),
-      ],
+                color: AppColors.whiteOpacity(0.05),
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calculate tile size to fit within this container's available width
+                  final availableWidth = constraints.maxWidth; // Already accounts for container padding
+                  final tileSpacing = 16.0; // 2 gaps of 8px
+                  final deckTileSize = (availableWidth - tileSpacing) / 3;
+
+                  return SizedBox(
+                    height: deckTileSize, // Make container height match tile size
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        for (int i = 0; i < state.deck.tiles.length; i++) ...[
+                          if (i > 0) const SizedBox(width: 8),
+                          SizedBox(
+                            width: deckTileSize,
+                            height: deckTileSize,
+                            child: GameTileWidget(gameTile: state.deck.tiles[i]),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -11,6 +11,6 @@ class AppColors {
   static const Color white = Colors.white;
   static const Color transparent = Colors.transparent;
 
-  static Color whiteOpacity(double opacity) => Colors.white.withOpacity(opacity);
-  static Color primaryPurpleOpacity(double opacity) => primaryPurple.withOpacity(opacity);
+  static Color whiteOpacity(double opacity) => Colors.white.withValues(alpha: opacity);
+  static Color primaryPurpleOpacity(double opacity) => primaryPurple.withValues(alpha: opacity);
 }
