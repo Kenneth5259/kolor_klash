@@ -1,25 +1,11 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:kolor_klash/services/local_file_service.dart';
-
-import 'package:kolor_klash/state/app_reducer.dart';
-import 'package:kolor_klash/state/app_state.dart';
-import 'package:kolor_klash/state/subclasses/enums.dart';
-import 'package:kolor_klash/styles/background_gradient.dart';
-import 'package:kolor_klash/widgets/screen_container.dart';
-import 'package:redux/redux.dart';
+import 'package:kolor_klash/screens/home_screen/home_screen.dart';
 
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
-
-  AppState initialState = await LocalFileService.readAppState() ?? AppState(gridSize: 3, difficulty: Difficulty.easy);
-  initialState.initialized = false;
-
-  final store = Store<AppState>(appReducer, initialState: initialState, syncStream: true);
-
 
   final backgroundPlayer = AudioPlayer();
   final backgroundSongs = [
@@ -29,15 +15,14 @@ void main() async {
   ];
 
 
-  runApp(MyApp(store: store, backgroundPlayer: backgroundPlayer, backgroundSongs: backgroundSongs));
+  runApp(MyApp(backgroundPlayer: backgroundPlayer, backgroundSongs: backgroundSongs));
 }
 
 class MyApp extends StatelessWidget {
-  final Store<AppState> store;
   final AudioPlayer backgroundPlayer;
   final List<String> backgroundSongs;
 
-  const MyApp({super.key, required this.store, required this.backgroundPlayer, required this.backgroundSongs});
+  const MyApp({super.key, required this.backgroundPlayer, required this.backgroundSongs});
 
   // This widget is the root of your application.
   @override
@@ -47,19 +32,8 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown
     ]);
-    return StoreProvider<AppState>(
-      store: store,
-      child: MaterialApp(
-          home: Scaffold(
-            body: Container(
-              decoration: backgroundBoxDecoration,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 32.0),
-                  child: ScreenContainer(player: backgroundPlayer),
-                )
-            ),
-          )
-        ),
+    return const MaterialApp(
+        home: Scaffold(body: HomeScreen(),)
     );
   }
 

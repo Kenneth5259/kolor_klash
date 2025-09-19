@@ -1,3 +1,0 @@
-class MarkInitializedAction {
-  MarkInitializedAction();
-}
