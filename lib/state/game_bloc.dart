@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/tile_container.dart';
 import '../models/game_deck.dart';
@@ -62,22 +63,24 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     // Refill deck if empty
     final finalDeck = updatedDeck.refillIfEmpty();
 
-    // Calculate score increase (could be based on various factors)
-    final scoreIncrease = _calculateScoreIncrease(gameTile, updatedContainer);
+    // Check for color matches and process them
+    final matchResult = _processColorMatches(updatedGrid);
+    final processedGrid = matchResult['grid'] as List<TileContainer>;
+    final scoreIncrease = matchResult['score'] as int;
     final newScore = currentState.score + scoreIncrease;
 
     // Check for game over conditions
-    if (_isGameOver(updatedGrid, finalDeck)) {
+    if (_isGameOver(processedGrid, finalDeck)) {
       emit(GameOver(
         finalScore: newScore,
-        finalGrid: updatedGrid,
+        finalGrid: processedGrid,
       ));
       return;
     }
 
     // Emit updated game state
     emit(currentState.copyWith(
-      grid: updatedGrid,
+      grid: processedGrid,
       deck: finalDeck,
       score: newScore,
     ));
@@ -87,18 +90,125 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     emit(GameInProgress.initial());
   }
 
-  // Calculate score increase for placing a tile
-  int _calculateScoreIncrease(gameTile, TileContainer updatedContainer) {
-    // Simple scoring: 10 points per colored column placed
-    int coloredColumns = 0;
-    for (final color in gameTile.columnColors) {
-      if (color != null) coloredColumns++;
+  // Process color matches and return updated grid and score
+  Map<String, dynamic> _processColorMatches(List<TileContainer> grid) {
+    final gridToProcess = List<TileContainer>.from(grid);
+    int totalScore = 0;
+
+    // Check for matches and process them
+    final matchedColumns = _findColorMatches(gridToProcess);
+
+    if (matchedColumns.isNotEmpty) {
+      // Calculate score based on number of columns flushed
+      totalScore = matchedColumns.length * 10; // 10 points per flushed column
+
+      // Remove matched colors (reset to transparent)
+      final processedGrid = _removeMatchedColors(gridToProcess, matchedColumns);
+
+      return {
+        'grid': processedGrid,
+        'score': totalScore,
+      };
     }
 
-    // Bonus for filling a container completely
-    int bonus = updatedContainer.isFull ? 50 : 0;
+    return {
+      'grid': gridToProcess,
+      'score': 0,
+    };
+  }
 
-    return (coloredColumns * 10) + bonus;
+  // Find all color matches in the grid
+  Set<String> _findColorMatches(List<TileContainer> grid) {
+    final matchedColumns = <String>{};
+
+    // Check each container for single tile matches (all 3 columns same color)
+    for (int i = 0; i < 9; i++) {
+      final container = grid[i];
+      final singleTileMatches = _findSingleTileMatches(container, i);
+      matchedColumns.addAll(singleTileMatches);
+    }
+
+    // Check for line matches (vertical, horizontal, diagonal)
+    final lineMatches = _findLineMatches(grid);
+    matchedColumns.addAll(lineMatches);
+
+    return matchedColumns;
+  }
+
+  // Find matches within a single tile container (all 3 columns same color)
+  Set<String> _findSingleTileMatches(TileContainer container, int containerIndex) {
+    final matchedColumns = <String>{};
+    final colors = container.columnColors;
+
+    // Check if all 3 columns have the same non-null color
+    if (colors[0] != null && colors[1] != null && colors[2] != null) {
+      if (_colorsEqual(colors[0]!, colors[1]!) && _colorsEqual(colors[1]!, colors[2]!)) {
+        // All 3 columns match - add all to matched set
+        matchedColumns.add('$containerIndex-0');
+        matchedColumns.add('$containerIndex-1');
+        matchedColumns.add('$containerIndex-2');
+      }
+    }
+
+    return matchedColumns;
+  }
+
+  Set<String> _findLineMatches(List<TileContainer> grid) {
+    final matchedColumns = <String>{};
+
+    final lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical
+      [0, 4, 8], [2, 4, 6],            // Diagonal
+    ];
+
+    for (final line in lines) {
+      // Collect all non-null colors in each tile
+      final tileColors = line.map((i) => grid[i].columnColors.whereType<Color>().toSet()).toList();
+      // Find intersection (colors present in all three tiles)
+      final commonColors = tileColors.reduce((a, b) => a.intersection(b));
+      for (final color in commonColors) {
+        for (final tileIndex in line) {
+          for (int col = 0; col < 3; col++) {
+            if (grid[tileIndex].columnColors[col] != null &&
+                _colorsEqual(grid[tileIndex].columnColors[col]!, color)) {
+              matchedColumns.add('$tileIndex-$col');
+            }
+          }
+        }
+      }
+    }
+
+    return matchedColumns;
+  }
+
+
+
+  // Helper method to compare colors reliably
+  bool _colorsEqual(Color color1, Color color2) {
+    return color1 == color2;
+  }
+
+  // Remove matched colors from the grid
+  List<TileContainer> _removeMatchedColors(List<TileContainer> grid, Set<String> matchedColumns) {
+    final updatedGrid = <TileContainer>[];
+
+    for (int containerIndex = 0; containerIndex < 9; containerIndex++) {
+      final container = grid[containerIndex];
+      final newColors = List<Color?>.from(container.columnColors);
+
+      // Check each column in this container
+      for (int col = 0; col < 3; col++) {
+        final columnKey = '$containerIndex-$col';
+        if (matchedColumns.contains(columnKey)) {
+          newColors[col] = null; // Reset to transparent
+        }
+      }
+
+      updatedGrid.add(container.copyWith(columnColors: newColors));
+    }
+
+    return updatedGrid;
   }
 
   // Check if game is over (no valid moves possible)
