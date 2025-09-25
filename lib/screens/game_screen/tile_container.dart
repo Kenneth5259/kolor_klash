@@ -6,7 +6,7 @@ import '../../models/game_tile.dart' as model;
 import '../../state/game_bloc.dart';
 import '../../state/game_event.dart';
 
-class TileContainerWidget extends StatelessWidget {
+class TileContainerWidget extends StatefulWidget {
   final TileContainer tileContainer;
 
   const TileContainerWidget({
@@ -15,21 +15,53 @@ class TileContainerWidget extends StatelessWidget {
   });
 
   @override
+  State<TileContainerWidget> createState() => _TileContainerWidgetState();
+}
+
+class _TileContainerWidgetState extends State<TileContainerWidget> {
+  List<Color?> _previousColors = [null, null, null];
+
+  @override
+  void initState() {
+    super.initState();
+    _previousColors = List.from(widget.tileContainer.columnColors);
+  }
+
+  @override
+  void didUpdateWidget(TileContainerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _previousColors = List.from(oldWidget.tileContainer.columnColors);
+  }
+
+  Duration _getAnimationDuration(int columnIndex) {
+    final previousColor = _previousColors[columnIndex];
+    final currentColor = widget.tileContainer.columnColors[columnIndex];
+
+    // Only animate when going from color to transparent (fade out)
+    if (previousColor != null && currentColor == null) {
+      return const Duration(milliseconds: 550);
+    }
+
+    // Instant for all other changes (adding colors)
+    return Duration.zero;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DragTarget<model.GameTile>(
       onWillAcceptWithDetails: (details) {
-        return tileContainer.canAcceptTile(details.data);
+        return widget.tileContainer.canAcceptTile(details.data);
       },
       onAcceptWithDetails: (details) {
         context.read<GameBloc>().add(TilePlaced(
           gameTileId: details.data.id,
-          containerPosition: tileContainer.position,
+          containerPosition: widget.tileContainer.position,
         ));
       },
       builder: (context, candidateData, rejectedData) {
         final isHighlighted = candidateData.isNotEmpty;
         final canAccept = candidateData.isNotEmpty &&
-                         tileContainer.canAcceptTile(candidateData.first!);
+                         widget.tileContainer.canAcceptTile(candidateData.first!);
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -49,10 +81,12 @@ class TileContainerWidget extends StatelessWidget {
             children: [
               // Column 1
               Expanded(
-                child: Container(
+                child: AnimatedContainer(
+                  duration: _getAnimationDuration(0),
+                  curve: Curves.easeOut,
                   height: double.infinity,
                   decoration: BoxDecoration(
-                    color: tileContainer.columnColors[0] ?? Colors.transparent,
+                    color: widget.tileContainer.columnColors[0] ?? Colors.transparent,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(11),
                       bottomLeft: Radius.circular(11),
@@ -68,10 +102,12 @@ class TileContainerWidget extends StatelessWidget {
               ),
               // Column 2
               Expanded(
-                child: Container(
+                child: AnimatedContainer(
+                  duration: _getAnimationDuration(1),
+                  curve: Curves.easeOut,
                   height: double.infinity,
                   decoration: BoxDecoration(
-                    color: tileContainer.columnColors[1] ?? Colors.transparent,
+                    color: widget.tileContainer.columnColors[1] ?? Colors.transparent,
                     border: Border(
                       right: BorderSide(
                         color: AppColors.whiteOpacity(0.2),
@@ -83,10 +119,12 @@ class TileContainerWidget extends StatelessWidget {
               ),
               // Column 3
               Expanded(
-                child: Container(
+                child: AnimatedContainer(
+                  duration: _getAnimationDuration(2),
+                  curve: Curves.easeOut,
                   height: double.infinity,
                   decoration: BoxDecoration(
-                    color: tileContainer.columnColors[2] ?? Colors.transparent,
+                    color: widget.tileContainer.columnColors[2] ?? Colors.transparent,
                     borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(11),
                       bottomRight: Radius.circular(11),

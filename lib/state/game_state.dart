@@ -71,3 +71,33 @@ class GameError extends GameState {
     required this.previousState,
   });
 }
+
+// Game state when colors are fading out
+class GameFadingColors extends GameState {
+  final List<TileContainer> grid;
+  final GameDeck deck;
+  final int score;
+  final int rerollsAvailable;
+  final int deckRefillCount;
+  final Set<String> fadingColumns; // Format: 'containerIndex-columnIndex'
+
+  GameFadingColors({
+    required this.grid,
+    required this.deck,
+    required this.score,
+    required this.rerollsAvailable,
+    required this.deckRefillCount,
+    required this.fadingColumns,
+  });
+
+  // Convert back to GameInProgress after animation
+  GameInProgress toGameInProgress(List<TileContainer> newGrid) {
+    return GameInProgress(
+      grid: newGrid,
+      deck: deck,
+      score: score,
+      rerollsAvailable: rerollsAvailable,
+      deckRefillCount: deckRefillCount,
+    );
+  }
+}
