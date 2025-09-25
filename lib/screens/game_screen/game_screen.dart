@@ -79,7 +79,12 @@ class _GameScreenState extends State<GameScreen>
   Widget _buildHeader() {
     return BlocBuilder<GameBloc, GameState>(
       builder: (context, state) {
-        final score = state is GameInProgress ? state.score : 0;
+        int score = 0;
+        if (state is GameInProgress) {
+          score = state.score;
+        } else if (state is GameOver) {
+          score = state.finalScore;
+        }
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -145,10 +150,6 @@ class _GameScreenState extends State<GameScreen>
   Widget _buildGameGrid() {
     return BlocBuilder<GameBloc, GameState>(
       builder: (context, state) {
-        if (state is! GameInProgress) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
         return LayoutBuilder(
           builder: (context, constraints) {
             final tileSize = _calculateTileSize(constraints.maxWidth);
@@ -167,27 +168,114 @@ class _GameScreenState extends State<GameScreen>
                 ),
                 color: AppColors.whiteOpacity(0.05),
               ),
-              child: SizedBox(
-                width: gridSize,
-                height: gridSize,
-                child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                    childAspectRatio: 1.0,
-                  ),
-                  itemCount: 9,
-                  itemBuilder: (context, index) => TileContainerWidget(
-                    tileContainer: state.grid[index],
-                  ),
-                ),
-              ),
+              child: _buildGridContent(state, gridSize),
             );
           },
         );
       },
+    );
+  }
+
+  Widget _buildGridContent(GameState state, double gridSize) {
+    if (state is GameOver) {
+      return _buildGameOverOverlay(state);
+    }
+
+    if (state is GameInProgress) {
+      return SizedBox(
+        width: gridSize,
+        height: gridSize,
+        child: GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 1.0,
+          ),
+          itemCount: 9,
+          itemBuilder: (context, index) => TileContainerWidget(
+            tileContainer: state.grid[index],
+          ),
+        ),
+      );
+    }
+
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  Widget _buildGameOverOverlay(GameOver gameOverState) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: AppColors.whiteOpacity(0.1),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'GAME OVER',
+            style: TextStyle(
+              fontSize: 28,
+              color: AppColors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2.0,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'FINAL SCORE',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColors.whiteOpacity(0.6),
+              letterSpacing: 1.5,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            gameOverState.finalScore.toString(),
+            style: TextStyle(
+              fontSize: 48,
+              color: AppColors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.0,
+            ),
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton.icon(
+            onPressed: () {
+              context.read<GameBloc>().add(GameReset());
+            },
+            icon: Icon(
+              Icons.refresh,
+              color: AppColors.white,
+              size: 20,
+            ),
+            label: Text(
+              'START NEW GAME',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.white,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.0,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.whiteOpacity(0.2),
+              foregroundColor: AppColors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: AppColors.whiteOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
