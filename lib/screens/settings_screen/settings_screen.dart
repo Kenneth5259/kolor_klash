@@ -29,11 +29,11 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   final List<String> _languages = [
     'English',
-    'Spanish',
-    'French',
-    'German',
-    'Japanese',
-    'Chinese',
+    'Español',
+    'Français',
+    'Deutsch',
+    '日本語',
+    '中文',
   ];
 
   final List<String> _difficulties = [
