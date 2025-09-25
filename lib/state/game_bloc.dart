@@ -68,6 +68,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     final wasRefilled = updatedDeck.tiles.isEmpty && finalDeck.tiles.isNotEmpty;
     final newRefillCount = wasRefilled ? currentState.deckRefillCount + 1 : currentState.deckRefillCount;
 
+    // Play swoosh sound when deck refills
+    if (wasRefilled) {
+      print('GameBloc: Deck refilled, playing swoosh sound');
+      AudioService.playSwooshSound();
+    }
+
     // Award reroll every 10 refills
     final newRerolls = wasRefilled && newRefillCount % 10 == 0
         ? currentState.rerollsAvailable + 1
@@ -145,6 +151,10 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     final newDeck = GameDeck.newDeck();
     final newRerolls = currentState.rerollsAvailable - 1;
     print('Creating new deck, rerolls: $newRerolls'); // Debug
+
+    // Play swoosh sound when deck is rerolled
+    print('GameBloc: Deck rerolled, playing swoosh sound');
+    AudioService.playSwooshSound();
 
     // Emit updated state with new deck and decreased rerolls
     emit(currentState.copyWith(
