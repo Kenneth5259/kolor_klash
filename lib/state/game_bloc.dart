@@ -81,7 +81,11 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     // Check for game over conditions
     if (_isGameOver(processedGrid, finalDeck)) {
       // Save the score when game ends
-      ScoreService.saveScore(newScore);
+      ScoreService.saveScore(newScore).then((_) {
+        print('Score saved: $newScore'); // Debug
+      }).catchError((error) {
+        print('Error saving score: $error'); // Debug
+      });
 
       emit(GameOver(
         finalScore: newScore,
