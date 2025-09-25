@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/tile_container.dart';
 import '../models/game_deck.dart';
+import '../services/score_service.dart';
 import 'game_event.dart';
 import 'game_state.dart';
 
@@ -79,6 +80,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
     // Check for game over conditions
     if (_isGameOver(processedGrid, finalDeck)) {
+      // Save the score when game ends
+      ScoreService.saveScore(newScore);
+
       emit(GameOver(
         finalScore: newScore,
         finalGrid: processedGrid,

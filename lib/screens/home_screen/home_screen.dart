@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kolor_klash/theme/app_theme.dart';
 import 'package:kolor_klash/theme/app_text_styles.dart';
 import 'package:kolor_klash/screens/game_screen/game_screen.dart';
+import 'package:kolor_klash/screens/scores_screen/scores_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -91,7 +92,11 @@ class _HomeScreenState extends State<HomeScreen>
                       text: 'SCORES',
                       icon: Icons.leaderboard,
                       onPressed: () {
-                        // Navigation logic here
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ScoresScreen(),
+                          ),
+                        );
                       },
                     ),
                   ),
