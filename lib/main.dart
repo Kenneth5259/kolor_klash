@@ -6,10 +6,14 @@ import 'package:kolor_klash/screens/home_screen/home_screen.dart';
 import 'package:kolor_klash/state/settings_bloc.dart';
 import 'package:kolor_klash/state/settings_event.dart';
 import 'package:kolor_klash/state/settings_state.dart';
+import 'package:kolor_klash/services/audio_service.dart';
 
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize audio services
+  await AudioService.initialize();
 
   final backgroundPlayer = AudioPlayer();
   final backgroundSongs = [
@@ -68,6 +72,12 @@ class _MyAppState extends State<MyApp> {
   void _updateAudioFromSettings(SettingsLoaded settings) {
     // Update volume
     widget.backgroundPlayer.setVolume(settings.masterVolume);
+
+    // Update audio service settings
+    AudioService.updateSettings(
+      soundEffectsEnabled: settings.soundEffectsEnabled,
+      masterVolume: settings.masterVolume,
+    );
 
     // Handle music toggle
     if (settings.musicEnabled && !_isPlaying) {

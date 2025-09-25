@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/tile_container.dart';
 import '../models/game_deck.dart';
 import '../services/score_service.dart';
+import '../services/audio_service.dart';
 import 'game_event.dart';
 import 'game_state.dart';
 
@@ -77,6 +78,18 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     final processedGrid = matchResult['grid'] as List<TileContainer>;
     final scoreIncrease = matchResult['score'] as int;
     final newScore = currentState.score + scoreIncrease;
+
+    // Play appropriate sound effect for every tile placement
+    print('GameBloc: Tile placed. Score increase: $scoreIncrease');
+    if (scoreIncrease > 0) {
+      // Colors were flushed - play twinkle sound
+      print('GameBloc: Playing twinkle sound for color flush');
+      AudioService.playTwinkleSound();
+    } else {
+      // Normal tile drop (regardless of tile complexity) - play pop sound
+      print('GameBloc: Playing pop sound for normal tile drop');
+      AudioService.playPopSound();
+    }
 
     // Check for game over conditions
     if (_isGameOver(processedGrid, finalDeck)) {
