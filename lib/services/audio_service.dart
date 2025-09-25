@@ -34,9 +34,7 @@ class AudioService {
 
   // Play pop sound when tile is dropped without color flush
   static Future<void> playPopSound() async {
-    print('AudioService: Attempting to play pop sound. Enabled: $_soundEffectsEnabled, Volume: $_masterVolume');
     if (!_soundEffectsEnabled || _popPlayer == null) {
-      print('AudioService: Sound effects disabled or player not initialized, skipping pop sound');
       return;
     }
 
@@ -45,17 +43,14 @@ class AudioService {
       await _popPlayer!.stop();
       await _popPlayer!.setVolume(_masterVolume);
       await _popPlayer!.play(AssetSource(_popSound));
-      print('AudioService: Pop sound played successfully');
     } catch (e) {
-      print('Error playing pop sound: $e');
+      // Error playing pop sound
     }
   }
 
   // Play twinkle sound when tile is dropped and colors are flushed
   static Future<void> playTwinkleSound() async {
-    print('AudioService: Attempting to play twinkle sound. Enabled: $_soundEffectsEnabled, Volume: $_masterVolume');
     if (!_soundEffectsEnabled || _twinklePlayer == null) {
-      print('AudioService: Sound effects disabled or player not initialized, skipping twinkle sound');
       return;
     }
 
@@ -64,17 +59,14 @@ class AudioService {
       await _twinklePlayer!.stop();
       await _twinklePlayer!.setVolume(_masterVolume);
       await _twinklePlayer!.play(AssetSource(_twinkleSound));
-      print('AudioService: Twinkle sound played successfully');
     } catch (e) {
-      print('Error playing twinkle sound: $e');
+      // Error playing twinkle sound
     }
   }
 
   // Play swoosh sound when deck resets (refill or reroll)
   static Future<void> playSwooshSound() async {
-    print('AudioService: Attempting to play swoosh sound. Enabled: $_soundEffectsEnabled, Volume: $_masterVolume');
     if (!_soundEffectsEnabled || _swooshPlayer == null) {
-      print('AudioService: Sound effects disabled or player not initialized, skipping swoosh sound');
       return;
     }
 
@@ -83,9 +75,8 @@ class AudioService {
       await _swooshPlayer!.stop();
       await _swooshPlayer!.setVolume(_masterVolume);
       await _swooshPlayer!.play(AssetSource(_swooshSound));
-      print('AudioService: Swoosh sound played successfully');
     } catch (e) {
-      print('Error playing swoosh sound: $e');
+      // Error playing swoosh sound
     }
   }
 

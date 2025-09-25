@@ -25,7 +25,6 @@ class ScoreService {
 
       return scores;
     } catch (e) {
-      print('Error loading scores: $e');
       return [];
     }
   }
@@ -61,7 +60,7 @@ class ScoreService {
 
       await prefs.setStringList(_scoresKey, scoresJson);
     } catch (e) {
-      print('Error saving score: $e');
+      // Error saving score
     }
   }
 
@@ -77,7 +76,7 @@ class ScoreService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_scoresKey);
     } catch (e) {
-      print('Error clearing scores: $e');
+      // Error clearing scores
     }
   }
 }

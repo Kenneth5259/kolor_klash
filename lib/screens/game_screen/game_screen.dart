@@ -369,7 +369,6 @@ class _GameScreenState extends State<GameScreen>
                   icon: Icons.casino,
                   onPressed: () {
                     if (canReroll) {
-                      print('Reroll button pressed'); // Debug
                       context.read<GameBloc>().add(DeckRerolled());
                     }
                   },

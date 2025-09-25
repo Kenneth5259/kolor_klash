@@ -92,6 +92,8 @@ class _SettingsScreenState extends State<SettingsScreen>
                     return const SizedBox.shrink();
                   }
 
+                  final settings = state;
+
                   return SingleChildScrollView(
                     padding: const EdgeInsets.all(24.0),
                     child: Column(
@@ -99,12 +101,12 @@ class _SettingsScreenState extends State<SettingsScreen>
                       children: [
                         _buildSectionTitle('Audio Settings'),
                         const SizedBox(height: 16),
-                        _buildAudioSettings(state),
+                        _buildAudioSettings(settings),
                         const SizedBox(height: 32),
 
                         _buildSectionTitle('Gameplay Settings'),
                         const SizedBox(height: 16),
-                        _buildGameplaySettings(state),
+                        _buildGameplaySettings(settings),
                         const SizedBox(height: 32),
 
                         _buildSectionTitle('Preferences'),
@@ -264,7 +266,7 @@ class _SettingsScreenState extends State<SettingsScreen>
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.primaryPurple,
+            activeThumbColor: AppColors.primaryPurple,
             activeTrackColor: AppColors.primaryPurpleOpacity(0.3),
             inactiveThumbColor: AppColors.whiteOpacity(0.4),
             inactiveTrackColor: AppColors.whiteOpacity(0.1),

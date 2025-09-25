@@ -70,7 +70,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
     // Play swoosh sound when deck refills
     if (wasRefilled) {
-      print('GameBloc: Deck refilled, playing swoosh sound');
       AudioService.playSwooshSound();
     }
 
@@ -86,25 +85,18 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     final newScore = currentState.score + scoreIncrease;
 
     // Play appropriate sound effect for every tile placement
-    print('GameBloc: Tile placed. Score increase: $scoreIncrease');
     if (scoreIncrease > 0) {
       // Colors were flushed - play twinkle sound
-      print('GameBloc: Playing twinkle sound for color flush');
       AudioService.playTwinkleSound();
     } else {
       // Normal tile drop (regardless of tile complexity) - play pop sound
-      print('GameBloc: Playing pop sound for normal tile drop');
       AudioService.playPopSound();
     }
 
     // Check for game over conditions
     if (_isGameOver(processedGrid, finalDeck)) {
       // Save the score when game ends
-      ScoreService.saveScore(newScore).then((_) {
-        print('Score saved: $newScore'); // Debug
-      }).catchError((error) {
-        print('Error saving score: $error'); // Debug
-      });
+      ScoreService.saveScore(newScore);
 
       emit(GameOver(
         finalScore: newScore,
@@ -128,18 +120,14 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   void _onDeckRerolled(DeckRerolled event, Emitter<GameState> emit) {
-    print('DeckRerolled event received'); // Debug
     if (state is! GameInProgress) {
-      print('State is not GameInProgress: ${state.runtimeType}'); // Debug
       return;
     }
 
     final currentState = state as GameInProgress;
-    print('Current rerolls: ${currentState.rerollsAvailable}'); // Debug
 
     // Check if player has rerolls available
     if (currentState.rerollsAvailable <= 0) {
-      print('No rerolls available'); // Debug
       emit(GameError(
         message: 'No rerolls available',
         previousState: currentState,
@@ -150,10 +138,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     // Create new deck and decrease reroll count
     final newDeck = GameDeck.newDeck();
     final newRerolls = currentState.rerollsAvailable - 1;
-    print('Creating new deck, rerolls: $newRerolls'); // Debug
 
     // Play swoosh sound when deck is rerolled
-    print('GameBloc: Deck rerolled, playing swoosh sound');
     AudioService.playSwooshSound();
 
     // Emit updated state with new deck and decreased rerolls
