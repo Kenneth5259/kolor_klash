@@ -356,11 +356,24 @@ class _GameScreenState extends State<GameScreen>
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: AppTheme.buildSecondaryButton(
-            text: 'HINT',
-            icon: Icons.lightbulb_outline,
-            onPressed: () {
-              // Show hint logic
+          child: BlocBuilder<GameBloc, GameState>(
+            builder: (context, state) {
+              final rerollsAvailable = state is GameInProgress ? state.rerollsAvailable : 0;
+              final canReroll = rerollsAvailable > 0;
+
+              return Opacity(
+                opacity: canReroll ? 1.0 : 0.5,
+                child: AppTheme.buildSecondaryButton(
+                  text: 'REROLL ($rerollsAvailable)',
+                  icon: Icons.casino,
+                  onPressed: () {
+                    if (canReroll) {
+                      print('Reroll button pressed'); // Debug
+                      context.read<GameBloc>().add(DeckRerolled());
+                    }
+                  },
+                ),
+              );
             },
           ),
         ),

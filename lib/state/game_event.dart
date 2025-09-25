@@ -16,3 +16,6 @@ class TilePlaced extends GameEvent {
 
 // Event to reset the game
 class GameReset extends GameEvent {}
+
+// Event to reroll the deck
+class DeckRerolled extends GameEvent {}

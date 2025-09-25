@@ -10,6 +10,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     on<GameStarted>(_onGameStarted);
     on<TilePlaced>(_onTilePlaced);
     on<GameReset>(_onGameReset);
+    on<DeckRerolled>(_onDeckRerolled);
   }
 
   void _onGameStarted(GameStarted event, Emitter<GameState> emit) {
@@ -60,8 +61,15 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     // Remove tile from deck
     final updatedDeck = currentState.deck.removeTile(event.gameTileId);
 
-    // Refill deck if empty
+    // Refill deck if empty and track refills
     final finalDeck = updatedDeck.refillIfEmpty();
+    final wasRefilled = updatedDeck.tiles.isEmpty && finalDeck.tiles.isNotEmpty;
+    final newRefillCount = wasRefilled ? currentState.deckRefillCount + 1 : currentState.deckRefillCount;
+
+    // Award reroll every 10 refills
+    final newRerolls = wasRefilled && newRefillCount % 10 == 0
+        ? currentState.rerollsAvailable + 1
+        : currentState.rerollsAvailable;
 
     // Check for color matches and process them
     final matchResult = _processColorMatches(updatedGrid);
@@ -83,11 +91,45 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       grid: processedGrid,
       deck: finalDeck,
       score: newScore,
+      rerollsAvailable: newRerolls,
+      deckRefillCount: newRefillCount,
     ));
   }
 
   void _onGameReset(GameReset event, Emitter<GameState> emit) {
     emit(GameInProgress.initial());
+  }
+
+  void _onDeckRerolled(DeckRerolled event, Emitter<GameState> emit) {
+    print('DeckRerolled event received'); // Debug
+    if (state is! GameInProgress) {
+      print('State is not GameInProgress: ${state.runtimeType}'); // Debug
+      return;
+    }
+
+    final currentState = state as GameInProgress;
+    print('Current rerolls: ${currentState.rerollsAvailable}'); // Debug
+
+    // Check if player has rerolls available
+    if (currentState.rerollsAvailable <= 0) {
+      print('No rerolls available'); // Debug
+      emit(GameError(
+        message: 'No rerolls available',
+        previousState: currentState,
+      ));
+      return;
+    }
+
+    // Create new deck and decrease reroll count
+    final newDeck = GameDeck.newDeck();
+    final newRerolls = currentState.rerollsAvailable - 1;
+    print('Creating new deck, rerolls: $newRerolls'); // Debug
+
+    // Emit updated state with new deck and decreased rerolls
+    emit(currentState.copyWith(
+      deck: newDeck,
+      rerollsAvailable: newRerolls,
+    ));
   }
 
   // Process color matches and return updated grid and score

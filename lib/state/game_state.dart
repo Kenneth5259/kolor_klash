@@ -11,11 +11,15 @@ class GameInProgress extends GameState {
   final List<TileContainer> grid; // 9 tile containers (positions 1-9)
   final GameDeck deck; // Current deck with up to 3 tiles
   final int score;
+  final int rerollsAvailable; // Number of rerolls the player has
+  final int deckRefillCount; // Track how many times deck has been refilled
 
   GameInProgress({
     required this.grid,
     required this.deck,
     required this.score,
+    required this.rerollsAvailable,
+    required this.deckRefillCount,
   });
 
   // Create initial game state
@@ -24,6 +28,8 @@ class GameInProgress extends GameState {
       grid: List.generate(9, (index) => TileContainer.empty(index + 1)),
       deck: GameDeck.newDeck(),
       score: 0,
+      rerollsAvailable: 2, // Start with 2 rerolls
+      deckRefillCount: 0,
     );
   }
 
@@ -31,11 +37,15 @@ class GameInProgress extends GameState {
     List<TileContainer>? grid,
     GameDeck? deck,
     int? score,
+    int? rerollsAvailable,
+    int? deckRefillCount,
   }) {
     return GameInProgress(
       grid: grid ?? this.grid,
       deck: deck ?? this.deck,
       score: score ?? this.score,
+      rerollsAvailable: rerollsAvailable ?? this.rerollsAvailable,
+      deckRefillCount: deckRefillCount ?? this.deckRefillCount,
     );
   }
 }
