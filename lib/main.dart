@@ -70,6 +70,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _updateAudioFromSettings(SettingsLoaded settings) {
+    print('Updating audio from settings: music=${settings.musicEnabled}, volume=${settings.masterVolume}');
+
     // Update volume
     widget.backgroundPlayer.setVolume(settings.masterVolume);
 
@@ -82,11 +84,17 @@ class _MyAppState extends State<MyApp> {
     // Handle music toggle
     if (settings.musicEnabled && !_isPlaying) {
       // Start playing music
+      print('Starting background music');
       _isPlaying = true;
       widget.backgroundPlayer.play(AssetSource(widget.backgroundSongs[_currentSongIndex]));
     } else if (!settings.musicEnabled && _isPlaying) {
       // Stop playing music
+      print('Stopping background music');
       _isPlaying = false;
+      widget.backgroundPlayer.stop();
+    } else if (!settings.musicEnabled && !_isPlaying) {
+      // Ensure music stays stopped
+      print('Ensuring background music stays stopped');
       widget.backgroundPlayer.stop();
     }
   }
@@ -102,6 +110,7 @@ class _MyAppState extends State<MyApp> {
       value: _settingsBloc,
       child: BlocListener<SettingsBloc, SettingsState>(
         listener: (context, state) {
+          print('Settings state changed: ${state.runtimeType}');
           if (state is SettingsLoaded) {
             _updateAudioFromSettings(state);
           }
