@@ -4,6 +4,7 @@ class SettingsService {
   static const String _musicKey = 'music_enabled';
   static const String _soundEffectsKey = 'sound_effects_enabled';
   static const String _masterVolumeKey = 'master_volume';
+  static const String _animationsKey = 'animations_enabled';
 
   static Future<bool> getMusicEnabled() async {
     final prefs = await SharedPreferences.getInstance();
@@ -35,15 +36,27 @@ class SettingsService {
     await prefs.setDouble(_masterVolumeKey, volume);
   }
 
+  static Future<bool> getAnimationsEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_animationsKey) ?? true;
+  }
+
+  static Future<void> setAnimationsEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_animationsKey, enabled);
+  }
+
   static Future<Map<String, dynamic>> loadAllSettings() async {
     final musicEnabled = await getMusicEnabled();
     final soundEffectsEnabled = await getSoundEffectsEnabled();
     final masterVolume = await getMasterVolume();
+    final animationsEnabled = await getAnimationsEnabled();
 
     return {
       'musicEnabled': musicEnabled,
       'soundEffectsEnabled': soundEffectsEnabled,
       'masterVolume': masterVolume,
+      'animationsEnabled': animationsEnabled,
     };
   }
 }

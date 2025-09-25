@@ -5,6 +5,7 @@ import '../../models/tile_container.dart';
 import '../../models/game_tile.dart' as model;
 import '../../state/game_bloc.dart';
 import '../../state/game_event.dart';
+import '../../services/animation_service.dart';
 
 class TileContainerWidget extends StatefulWidget {
   final TileContainer tileContainer;
@@ -39,7 +40,7 @@ class _TileContainerWidgetState extends State<TileContainerWidget> {
 
     // Only animate when going from color to transparent (fade out)
     if (previousColor != null && currentColor == null) {
-      return const Duration(milliseconds: 550);
+      return AnimationService.getDuration(const Duration(milliseconds: 550));
     }
 
     // Instant for all other changes (adding colors)
@@ -64,7 +65,7 @@ class _TileContainerWidgetState extends State<TileContainerWidget> {
                          widget.tileContainer.canAcceptTile(candidateData.first!);
 
         return AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: AnimationService.getDuration(const Duration(milliseconds: 200)),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
@@ -83,7 +84,7 @@ class _TileContainerWidgetState extends State<TileContainerWidget> {
               Expanded(
                 child: AnimatedContainer(
                   duration: _getAnimationDuration(0),
-                  curve: Curves.easeOut,
+                  curve: AnimationService.getCurve(Curves.easeOut),
                   height: double.infinity,
                   decoration: BoxDecoration(
                     color: widget.tileContainer.columnColors[0] ?? Colors.transparent,
@@ -104,7 +105,7 @@ class _TileContainerWidgetState extends State<TileContainerWidget> {
               Expanded(
                 child: AnimatedContainer(
                   duration: _getAnimationDuration(1),
-                  curve: Curves.easeOut,
+                  curve: AnimationService.getCurve(Curves.easeOut),
                   height: double.infinity,
                   decoration: BoxDecoration(
                     color: widget.tileContainer.columnColors[1] ?? Colors.transparent,
@@ -121,7 +122,7 @@ class _TileContainerWidgetState extends State<TileContainerWidget> {
               Expanded(
                 child: AnimatedContainer(
                   duration: _getAnimationDuration(2),
-                  curve: Curves.easeOut,
+                  curve: AnimationService.getCurve(Curves.easeOut),
                   height: double.infinity,
                   decoration: BoxDecoration(
                     color: widget.tileContainer.columnColors[2] ?? Colors.transparent,

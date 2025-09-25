@@ -6,6 +6,7 @@ import 'package:kolor_klash/theme/app_colors.dart';
 import '../../state/settings_bloc.dart';
 import '../../state/settings_event.dart';
 import '../../state/settings_state.dart';
+import '../../services/animation_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -25,7 +26,6 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   String _selectedLanguage = 'English';
   bool _vibration = true;
-  bool _animations = true;
   String _difficulty = 'Normal';
 
   final List<String> _languages = [
@@ -48,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: AnimationService.getDuration(const Duration(milliseconds: 1500)),
       vsync: this,
     );
     _animationController.forward();
@@ -104,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen>
 
                         _buildSectionTitle('Gameplay Settings'),
                         const SizedBox(height: 16),
-                        _buildGameplaySettings(),
+                        _buildGameplaySettings(state),
                         const SizedBox(height: 32),
 
                         _buildSectionTitle('Preferences'),
@@ -187,7 +187,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _buildGameplaySettings() {
+  Widget _buildGameplaySettings(SettingsLoaded settings) {
     return Column(
       children: [
         _buildDropdownSetting(
@@ -209,8 +209,8 @@ class _SettingsScreenState extends State<SettingsScreen>
 
         _buildSwitchSetting(
           'Animations',
-          _animations,
-          (value) => setState(() => _animations = value),
+          settings.animationsEnabled,
+          (value) => context.read<SettingsBloc>().add(AnimationsToggled(value)),
           Icons.animation,
         ),
       ],

@@ -5,6 +5,7 @@ import 'package:kolor_klash/theme/app_colors.dart';
 import 'package:kolor_klash/state/game_bloc.dart';
 import 'package:kolor_klash/state/game_state.dart';
 import 'package:kolor_klash/state/game_event.dart';
+import '../../services/animation_service.dart';
 import 'tile_container.dart';
 import 'game_tile.dart' show GameTileWidget;
 
@@ -31,7 +32,7 @@ class _GameScreenState extends State<GameScreen>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: AnimationService.getDuration(const Duration(milliseconds: 1200)),
       vsync: this,
     );
     _animationController.forward();

@@ -3,6 +3,7 @@ import 'package:kolor_klash/theme/app_theme.dart';
 import 'package:kolor_klash/theme/app_colors.dart';
 import 'package:kolor_klash/models/score_entry.dart';
 import 'package:kolor_klash/services/score_service.dart';
+import '../../services/animation_service.dart';
 
 class ScoresScreen extends StatefulWidget {
   const ScoresScreen({super.key});
@@ -21,7 +22,7 @@ class _ScoresScreenState extends State<ScoresScreen>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: AnimationService.getDuration(const Duration(milliseconds: 1200)),
       vsync: this,
     );
     _loadScores();

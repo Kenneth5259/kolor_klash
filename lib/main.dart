@@ -7,6 +7,7 @@ import 'package:kolor_klash/state/settings_bloc.dart';
 import 'package:kolor_klash/state/settings_event.dart';
 import 'package:kolor_klash/state/settings_state.dart';
 import 'package:kolor_klash/services/audio_service.dart';
+import 'package:kolor_klash/services/animation_service.dart';
 
 void main() async {
 
@@ -79,6 +80,11 @@ class _MyAppState extends State<MyApp> {
     AudioService.updateSettings(
       soundEffectsEnabled: settings.soundEffectsEnabled,
       masterVolume: settings.masterVolume,
+    );
+
+    // Update animation service settings
+    AnimationService.updateSettings(
+      animationsEnabled: settings.animationsEnabled,
     );
 
     // Handle music toggle

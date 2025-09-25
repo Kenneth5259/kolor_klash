@@ -9,6 +9,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<MusicToggled>(_onMusicToggled);
     on<SoundEffectsToggled>(_onSoundEffectsToggled);
     on<MasterVolumeChanged>(_onMasterVolumeChanged);
+    on<AnimationsToggled>(_onAnimationsToggled);
   }
 
   Future<void> _onLoadSettings(LoadSettings event, Emitter<SettingsState> emit) async {
@@ -21,6 +22,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         musicEnabled: settings['musicEnabled'],
         soundEffectsEnabled: settings['soundEffectsEnabled'],
         masterVolume: settings['masterVolume'],
+        animationsEnabled: settings['animationsEnabled'],
       ));
     } catch (error) {
       emit(SettingsError('Failed to load settings: $error'));
@@ -65,6 +67,20 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         emit(currentState.copyWith(masterVolume: event.volume));
       } catch (error) {
         emit(SettingsError('Failed to update master volume: $error'));
+      }
+    }
+  }
+
+  Future<void> _onAnimationsToggled(AnimationsToggled event, Emitter<SettingsState> emit) async {
+    if (state is SettingsLoaded) {
+      final currentState = state as SettingsLoaded;
+
+      try {
+        await SettingsService.setAnimationsEnabled(event.enabled);
+
+        emit(currentState.copyWith(animationsEnabled: event.enabled));
+      } catch (error) {
+        emit(SettingsError('Failed to update animations setting: $error'));
       }
     }
   }

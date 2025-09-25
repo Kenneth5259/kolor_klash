@@ -4,6 +4,7 @@ import 'package:kolor_klash/theme/app_text_styles.dart';
 import 'package:kolor_klash/screens/game_screen/game_screen.dart';
 import 'package:kolor_klash/screens/scores_screen/scores_screen.dart';
 import 'package:kolor_klash/screens/settings_screen/settings_screen.dart';
+import '../../services/animation_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: AnimationService.getDuration(const Duration(milliseconds: 1500)),
       vsync: this,
     );
     _animationController.forward();

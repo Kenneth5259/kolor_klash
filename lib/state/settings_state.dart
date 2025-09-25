@@ -8,11 +8,13 @@ class SettingsLoaded extends SettingsState {
   final bool musicEnabled;
   final bool soundEffectsEnabled;
   final double masterVolume;
+  final bool animationsEnabled;
 
   SettingsLoaded({
     required this.musicEnabled,
     required this.soundEffectsEnabled,
     required this.masterVolume,
+    required this.animationsEnabled,
   });
 
   factory SettingsLoaded.initial() {
@@ -20,6 +22,7 @@ class SettingsLoaded extends SettingsState {
       musicEnabled: true,
       soundEffectsEnabled: true,
       masterVolume: 0.8,
+      animationsEnabled: true,
     );
   }
 
@@ -27,11 +30,13 @@ class SettingsLoaded extends SettingsState {
     bool? musicEnabled,
     bool? soundEffectsEnabled,
     double? masterVolume,
+    bool? animationsEnabled,
   }) {
     return SettingsLoaded(
       musicEnabled: musicEnabled ?? this.musicEnabled,
       soundEffectsEnabled: soundEffectsEnabled ?? this.soundEffectsEnabled,
       masterVolume: masterVolume ?? this.masterVolume,
+      animationsEnabled: animationsEnabled ?? this.animationsEnabled,
     );
   }
 }

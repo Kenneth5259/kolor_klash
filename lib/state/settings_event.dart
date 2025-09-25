@@ -19,3 +19,9 @@ class MasterVolumeChanged extends SettingsEvent {
 
   MasterVolumeChanged(this.volume);
 }
+
+class AnimationsToggled extends SettingsEvent {
+  final bool enabled;
+
+  AnimationsToggled(this.enabled);
+}
