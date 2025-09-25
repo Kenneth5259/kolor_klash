@@ -25,7 +25,6 @@ class _SettingsScreenState extends State<SettingsScreen>
   late AnimationController _animationController;
 
   String _selectedLanguage = 'English';
-  bool _vibration = true;
   String _difficulty = 'Normal';
 
   final List<String> _languages = [
@@ -201,13 +200,6 @@ class _SettingsScreenState extends State<SettingsScreen>
         ),
         const SizedBox(height: 16),
 
-        _buildSwitchSetting(
-          'Vibration',
-          _vibration,
-          (value) => setState(() => _vibration = value),
-          Icons.vibration,
-        ),
-        const SizedBox(height: 16),
 
         _buildSwitchSetting(
           'Animations',
