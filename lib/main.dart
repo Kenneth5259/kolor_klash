@@ -8,13 +8,15 @@ import 'package:kolor_klash/state/settings_event.dart';
 import 'package:kolor_klash/state/settings_state.dart';
 import 'package:kolor_klash/services/audio_service.dart';
 import 'package:kolor_klash/services/animation_service.dart';
+import 'package:kolor_klash/services/localization_service.dart';
 
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize audio services
+  // Initialize services
   await AudioService.initialize();
+  await LocalizationService.load('en');
 
   final backgroundPlayer = AudioPlayer();
   final backgroundSongs = [

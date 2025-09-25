@@ -6,6 +6,7 @@ import 'package:kolor_klash/state/game_bloc.dart';
 import 'package:kolor_klash/state/game_state.dart';
 import 'package:kolor_klash/state/game_event.dart';
 import '../../services/animation_service.dart';
+import '../../services/localization_service.dart';
 import 'tile_container.dart';
 import 'game_tile.dart' show GameTileWidget;
 
@@ -104,7 +105,7 @@ class _GameScreenState extends State<GameScreen>
             Column(
               children: [
                 Text(
-                  'SCORE',
+                  LocalizationService.gameScore,
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.whiteOpacity(0.6),
@@ -215,7 +216,7 @@ class _GameScreenState extends State<GameScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'GAME OVER',
+            LocalizationService.gameGameOver,
             style: TextStyle(
               fontSize: 28,
               color: AppColors.white,
@@ -225,7 +226,7 @@ class _GameScreenState extends State<GameScreen>
           ),
           const SizedBox(height: 16),
           Text(
-            'FINAL SCORE',
+            LocalizationService.gameFinalScore,
             style: TextStyle(
               fontSize: 14,
               color: AppColors.whiteOpacity(0.6),
@@ -254,7 +255,7 @@ class _GameScreenState extends State<GameScreen>
               size: 20,
             ),
             label: Text(
-              'START NEW GAME',
+              LocalizationService.gameStartNewGame,
               style: TextStyle(
                 fontSize: 16,
                 color: AppColors.white,
@@ -291,7 +292,7 @@ class _GameScreenState extends State<GameScreen>
         return Column(
           children: [
             Text(
-              'DECK',
+              LocalizationService.gameDeck,
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.whiteOpacity(0.6),
@@ -348,7 +349,7 @@ class _GameScreenState extends State<GameScreen>
       children: [
         Expanded(
           child: AppTheme.buildSecondaryButton(
-            text: 'PAUSE',
+            text: LocalizationService.gamePause,
             icon: Icons.pause,
             onPressed: () {
               // Pause game logic
@@ -365,7 +366,7 @@ class _GameScreenState extends State<GameScreen>
               return Opacity(
                 opacity: canReroll ? 1.0 : 0.5,
                 child: AppTheme.buildSecondaryButton(
-                  text: 'REROLL ($rerollsAvailable)',
+                  text: LocalizationService.gameRerollWithCount(rerollsAvailable),
                   icon: Icons.casino,
                   onPressed: () {
                     if (canReroll) {

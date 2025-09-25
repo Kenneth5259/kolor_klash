@@ -5,6 +5,7 @@ import 'package:kolor_klash/screens/game_screen/game_screen.dart';
 import 'package:kolor_klash/screens/scores_screen/scores_screen.dart';
 import 'package:kolor_klash/screens/settings_screen/settings_screen.dart';
 import '../../services/animation_service.dart';
+import '../../services/localization_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen>
 
               // Subtitle
               Text(
-                'Match • Merge • Master',
+                LocalizationService.appSubtitle,
                 style: AppTextStyles.subtitle,
               ),
 
@@ -63,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen>
 
               // Play Button
               AppTheme.buildPrimaryButton(
-                text: 'START GAME',
+                text: LocalizationService.homeStartGame,
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -81,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen>
                 children: [
                   Expanded(
                     child: AppTheme.buildSecondaryButton(
-                      text: 'SETTINGS',
+                      text: LocalizationService.homeSettings,
                       icon: Icons.settings,
                       onPressed: () {
                         Navigator.of(context).push(
@@ -95,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen>
                   const SizedBox(width: 16),
                   Expanded(
                     child: AppTheme.buildSecondaryButton(
-                      text: 'SCORES',
+                      text: LocalizationService.homeScores,
                       icon: Icons.leaderboard,
                       onPressed: () {
                         Navigator.of(context).push(
@@ -113,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen>
 
               // Version Info
               Text(
-                'Version 2.0.0',
+                LocalizationService.appVersion,
                 style: AppTextStyles.versionText,
               ),
 

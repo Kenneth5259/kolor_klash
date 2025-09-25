@@ -7,6 +7,7 @@ import '../../state/settings_bloc.dart';
 import '../../state/settings_event.dart';
 import '../../state/settings_state.dart';
 import '../../services/animation_service.dart';
+import '../../services/localization_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -81,7 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                   if (state is SettingsError) {
                     return Center(
                       child: Text(
-                        'Error loading settings: ${state.message}',
+                        '${LocalizationService.settingsErrorLoading}: ${state.message}',
                         style: AppTextStyles.secondaryButton,
                       ),
                     );
@@ -98,17 +99,17 @@ class _SettingsScreenState extends State<SettingsScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSectionTitle('Audio Settings'),
+                        _buildSectionTitle(LocalizationService.settingsAudioSection),
                         const SizedBox(height: 16),
                         _buildAudioSettings(settings),
                         const SizedBox(height: 32),
 
-                        _buildSectionTitle('Gameplay Settings'),
+                        _buildSectionTitle(LocalizationService.settingsGameplaySection),
                         const SizedBox(height: 16),
                         _buildGameplaySettings(settings),
                         const SizedBox(height: 32),
 
-                        _buildSectionTitle('Preferences'),
+                        _buildSectionTitle(LocalizationService.settingsPreferencesSection),
                         const SizedBox(height: 16),
                         _buildPreferences(),
                         const SizedBox(height: 32),
@@ -139,7 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen>
           ),
           const SizedBox(width: 8),
           AppTheme.buildGradientText(
-            text: 'SETTINGS',
+            text: LocalizationService.settingsTitle,
             style: AppTextStyles.gameTitle.copyWith(fontSize: 28),
           ),
         ],
@@ -162,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     return Column(
       children: [
         _buildSwitchSetting(
-          'Sound Effects',
+          LocalizationService.settingsSoundEffects,
           settings.soundEffectsEnabled,
           (value) => context.read<SettingsBloc>().add(SoundEffectsToggled(value)),
           Icons.volume_up,
@@ -170,7 +171,7 @@ class _SettingsScreenState extends State<SettingsScreen>
         const SizedBox(height: 16),
 
         _buildSwitchSetting(
-          'Music',
+          LocalizationService.settingsMusic,
           settings.musicEnabled,
           (value) => context.read<SettingsBloc>().add(MusicToggled(value)),
           Icons.music_note,
@@ -178,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen>
         const SizedBox(height: 16),
 
         _buildSliderSetting(
-          'Master Volume',
+          LocalizationService.settingsMasterVolume,
           settings.masterVolume,
           (value) => context.read<SettingsBloc>().add(MasterVolumeChanged(value)),
           Icons.volume_down,
@@ -192,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     return Column(
       children: [
         _buildDropdownSetting(
-          'Difficulty',
+          LocalizationService.settingsDifficulty,
           _difficulty,
           _difficulties,
           (value) => setState(() => _difficulty = value!),
@@ -202,7 +203,7 @@ class _SettingsScreenState extends State<SettingsScreen>
 
 
         _buildSwitchSetting(
-          'Animations',
+          LocalizationService.settingsAnimations,
           settings.animationsEnabled,
           (value) => context.read<SettingsBloc>().add(AnimationsToggled(value)),
           Icons.animation,
@@ -215,7 +216,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     return Column(
       children: [
         _buildDropdownSetting(
-          'Language',
+          LocalizationService.settingsLanguage,
           _selectedLanguage,
           _languages,
           (value) => setState(() => _selectedLanguage = value!),

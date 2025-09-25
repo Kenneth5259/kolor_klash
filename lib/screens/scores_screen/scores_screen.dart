@@ -4,6 +4,7 @@ import 'package:kolor_klash/theme/app_colors.dart';
 import 'package:kolor_klash/models/score_entry.dart';
 import 'package:kolor_klash/services/score_service.dart';
 import '../../services/animation_service.dart';
+import '../../services/localization_service.dart';
 
 class ScoresScreen extends StatefulWidget {
   const ScoresScreen({super.key});
@@ -65,7 +66,7 @@ class _ScoresScreenState extends State<ScoresScreen>
 
               // Back Button
               AppTheme.buildSecondaryButton(
-                text: 'BACK',
+                text: LocalizationService.scoresBack,
                 icon: Icons.arrow_back,
                 onPressed: () => Navigator.of(context).pop(),
               ),
@@ -92,7 +93,7 @@ class _ScoresScreenState extends State<ScoresScreen>
 
         // Title
         Text(
-          'HIGH SCORES',
+          LocalizationService.scoresTitle,
           style: TextStyle(
             fontSize: 24,
             color: AppColors.white,
@@ -131,7 +132,7 @@ class _ScoresScreenState extends State<ScoresScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              'No scores yet!',
+              LocalizationService.scoresNoScores,
               style: TextStyle(
                 fontSize: 18,
                 color: AppColors.whiteOpacity(0.6),
@@ -140,7 +141,7 @@ class _ScoresScreenState extends State<ScoresScreen>
             ),
             const SizedBox(height: 8),
             Text(
-              'Play a game to see your scores here',
+              LocalizationService.scoresNoScoresSubtitle,
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.whiteOpacity(0.4),
@@ -254,19 +255,19 @@ class _ScoresScreenState extends State<ScoresScreen>
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.whiteOpacity(0.9),
-        title: const Text('Clear Scores'),
-        content: const Text('Are you sure you want to clear all scores?'),
+        title: Text(LocalizationService.scoresClearScores),
+        content: Text(LocalizationService.scoresClearConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(LocalizationService.scoresCancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               _clearScores();
             },
-            child: const Text('Clear'),
+            child: Text(LocalizationService.scoresClear),
           ),
         ],
       ),
