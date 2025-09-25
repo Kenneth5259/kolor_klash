@@ -1,0 +1,70 @@
+{
+  "app": {
+    "subtitle": "Match • Merge • Master",
+    "version": "Version 2.0.0"
+  },
+  "home": {
+    "startGame": "START GAME",
+    "settings": "SETTINGS",
+    "scores": "SCORES"
+  },
+  "game": {
+    "score": "SCORE",
+    "deck": "DECK",
+    "pause": "PAUSE",
+    "reroll": "REROLL",
+    "gameOver": "GAME OVER",
+    "finalScore": "FINAL SCORE",
+    "startNewGame": "START NEW GAME"
+  },
+  "scores": {
+    "title": "HIGH SCORES",
+    "back": "BACK",
+    "noScores": "No scores yet!",
+    "noScoresSubtitle": "Play a game to see your scores here",
+    "clearScores": "Clear Scores",
+    "clearConfirmation": "Are you sure you want to clear all scores?",
+    "cancel": "Cancel",
+    "clear": "Clear"
+  },
+  "settings": {
+    "title": "SETTINGS",
+    "sections": {
+      "audio": "Audio Settings",
+      "gameplay": "Gameplay Settings",
+      "preferences": "Preferences"
+    },
+    "audio": {
+      "soundEffects": "Sound Effects",
+      "music": "Music",
+      "masterVolume": "Master Volume"
+    },
+    "gameplay": {
+      "difficulty": "Difficulty",
+      "animations": "Animations"
+    },
+    "preferences": {
+      "language": "Language"
+    },
+    "difficulties": {
+      "easy": "Easy",
+      "normal": "Normal",
+      "hard": "Hard",
+      "expert": "Expert"
+    },
+    "languages": {
+      "english": "English",
+      "spanish": "Español",
+      "french": "Français",
+      "german": "Deutsch",
+      "japanese": "日本語",
+      "chinese": "中文"
+    },
+    "errors": {
+      "loading": "Error loading settings"
+    }
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}
