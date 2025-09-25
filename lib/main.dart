@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kolor_klash/screens/home_screen/home_screen.dart';
 import 'package:kolor_klash/state/settings_bloc.dart';
 import 'package:kolor_klash/state/settings_event.dart';
+import 'package:kolor_klash/state/settings_state.dart';
 
 void main() async {
 
@@ -21,41 +22,86 @@ void main() async {
   runApp(MyApp(backgroundPlayer: backgroundPlayer, backgroundSongs: backgroundSongs));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final AudioPlayer backgroundPlayer;
   final List<String> backgroundSongs;
 
   const MyApp({super.key, required this.backgroundPlayer, required this.backgroundSongs});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late SettingsBloc _settingsBloc;
+  bool _isPlaying = false;
+  int _currentSongIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _settingsBloc = SettingsBloc()..add(LoadSettings());
+    _setupAudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    widget.backgroundPlayer.dispose();
+    _settingsBloc.close();
+    super.dispose();
+  }
+
+  void _setupAudioPlayer() {
+    // Listen for when songs complete to play next song
+    widget.backgroundPlayer.onPlayerComplete.listen((_) {
+      _playNextSong();
+    });
+  }
+
+  void _playNextSong() {
+    if (_isPlaying) {
+      _currentSongIndex = (_currentSongIndex + 1) % widget.backgroundSongs.length;
+      widget.backgroundPlayer.play(AssetSource(widget.backgroundSongs[_currentSongIndex]));
+    }
+  }
+
+  void _updateAudioFromSettings(SettingsLoaded settings) {
+    // Update volume
+    widget.backgroundPlayer.setVolume(settings.masterVolume);
+
+    // Handle music toggle
+    if (settings.musicEnabled && !_isPlaying) {
+      // Start playing music
+      _isPlaying = true;
+      widget.backgroundPlayer.play(AssetSource(widget.backgroundSongs[_currentSongIndex]));
+    } else if (!settings.musicEnabled && _isPlaying) {
+      // Stop playing music
+      _isPlaying = false;
+      widget.backgroundPlayer.stop();
+    }
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    playList();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown
     ]);
-    return BlocProvider(
-      create: (context) => SettingsBloc()..add(LoadSettings()),
-      child: const MaterialApp(
-        home: Scaffold(body: HomeScreen()),
+    return BlocProvider.value(
+      value: _settingsBloc,
+      child: BlocListener<SettingsBloc, SettingsState>(
+        listener: (context, state) {
+          if (state is SettingsLoaded) {
+            _updateAudioFromSettings(state);
+          }
+        },
+        child: const MaterialApp(
+          home: Scaffold(body: HomeScreen()),
+        ),
       ),
     );
   }
 
-  void playList() async {
-    backgroundPlayer.play(AssetSource(backgroundSongs[0]));
-    int i = 1;
-
-    backgroundPlayer.onPlayerComplete.listen((_) {
-      if(i < backgroundSongs.length) {
-        backgroundPlayer.play(AssetSource(backgroundSongs[i]));
-        i++;
-      } else {
-        i = 1;
-        backgroundPlayer.play(AssetSource(backgroundSongs[0]));
-      }
-    });
-  }
 }
 
