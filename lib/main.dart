@@ -1,7 +1,10 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kolor_klash/screens/home_screen/home_screen.dart';
+import 'package:kolor_klash/state/settings_bloc.dart';
+import 'package:kolor_klash/state/settings_event.dart';
 
 void main() async {
 
@@ -32,8 +35,11 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown
     ]);
-    return const MaterialApp(
-        home: Scaffold(body: HomeScreen(),)
+    return BlocProvider(
+      create: (context) => SettingsBloc()..add(LoadSettings()),
+      child: const MaterialApp(
+        home: Scaffold(body: HomeScreen()),
+      ),
     );
   }
 

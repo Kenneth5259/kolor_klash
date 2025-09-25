@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kolor_klash/theme/app_theme.dart';
 import 'package:kolor_klash/theme/app_text_styles.dart';
 import 'package:kolor_klash/theme/app_colors.dart';
+import '../../state/settings_bloc.dart';
+import '../../state/settings_event.dart';
+import '../../state/settings_state.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
+
+  // Static method to create the screen (now just returns the screen since bloc is provided at app level)
+  static Widget create() {
+    return const SettingsScreen();
+  }
 }
 
 class _SettingsScreenState extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
-  bool _soundEffects = true;
-  bool _music = true;
-  double _masterVolume = 0.8;
   String _selectedLanguage = 'English';
   bool _vibration = true;
   bool _animations = true;
@@ -63,27 +69,52 @@ class _SettingsScreenState extends State<SettingsScreen>
           children: [
             _buildAppBar(),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionTitle('Audio Settings'),
-                    const SizedBox(height: 16),
-                    _buildAudioSettings(),
-                    const SizedBox(height: 32),
+              child: BlocBuilder<SettingsBloc, SettingsState>(
+                builder: (context, state) {
+                  if (state is SettingsLoading || state is SettingsInitial) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryPurple,
+                      ),
+                    );
+                  }
 
-                    _buildSectionTitle('Gameplay Settings'),
-                    const SizedBox(height: 16),
-                    _buildGameplaySettings(),
-                    const SizedBox(height: 32),
+                  if (state is SettingsError) {
+                    return Center(
+                      child: Text(
+                        'Error loading settings: ${state.message}',
+                        style: AppTextStyles.secondaryButton,
+                      ),
+                    );
+                  }
 
-                    _buildSectionTitle('Preferences'),
-                    const SizedBox(height: 16),
-                    _buildPreferences(),
-                    const SizedBox(height: 32),
-                  ],
-                ),
+                  if (state is! SettingsLoaded) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionTitle('Audio Settings'),
+                        const SizedBox(height: 16),
+                        _buildAudioSettings(state),
+                        const SizedBox(height: 32),
+
+                        _buildSectionTitle('Gameplay Settings'),
+                        const SizedBox(height: 16),
+                        _buildGameplaySettings(),
+                        const SizedBox(height: 32),
+
+                        _buildSectionTitle('Preferences'),
+                        const SizedBox(height: 16),
+                        _buildPreferences(),
+                        const SizedBox(height: 32),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -126,29 +157,29 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _buildAudioSettings() {
+  Widget _buildAudioSettings(SettingsLoaded settings) {
     return Column(
       children: [
         _buildSwitchSetting(
           'Sound Effects',
-          _soundEffects,
-          (value) => setState(() => _soundEffects = value),
+          settings.soundEffectsEnabled,
+          (value) => context.read<SettingsBloc>().add(SoundEffectsToggled(value)),
           Icons.volume_up,
         ),
         const SizedBox(height: 16),
 
         _buildSwitchSetting(
           'Music',
-          _music,
-          (value) => setState(() => _music = value),
+          settings.musicEnabled,
+          (value) => context.read<SettingsBloc>().add(MusicToggled(value)),
           Icons.music_note,
         ),
         const SizedBox(height: 16),
 
         _buildSliderSetting(
           'Master Volume',
-          _masterVolume,
-          (value) => setState(() => _masterVolume = value),
+          settings.masterVolume,
+          (value) => context.read<SettingsBloc>().add(MasterVolumeChanged(value)),
           Icons.volume_down,
           Icons.volume_up,
         ),
