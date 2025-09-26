@@ -9,6 +9,7 @@ import 'package:kolor_klash/state/settings_state.dart';
 import 'package:kolor_klash/services/audio_service.dart';
 import 'package:kolor_klash/services/animation_service.dart';
 import 'package:kolor_klash/services/localization_service.dart';
+import 'package:kolor_klash/services/settings_service.dart';
 
 void main() async {
 
@@ -16,7 +17,10 @@ void main() async {
 
   // Initialize services
   await AudioService.initialize();
-  await LocalizationService.load('en');
+
+  // Load language from settings
+  final language = await SettingsService.getLanguage();
+  await LocalizationService.load(language);
 
   final backgroundPlayer = AudioPlayer();
   final backgroundSongs = [
@@ -86,6 +90,11 @@ class _MyAppState extends State<MyApp> {
     AnimationService.updateSettings(
       animationsEnabled: settings.animationsEnabled,
     );
+
+    // Update localization if language changed
+    if (LocalizationService.currentLanguage != settings.language) {
+      LocalizationService.load(settings.language);
+    }
 
     // Handle music toggle
     if (settings.musicEnabled && !_isPlaying) {

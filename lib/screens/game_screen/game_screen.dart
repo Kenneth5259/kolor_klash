@@ -5,6 +5,8 @@ import 'package:kolor_klash/theme/app_colors.dart';
 import 'package:kolor_klash/state/game_bloc.dart';
 import 'package:kolor_klash/state/game_state.dart';
 import 'package:kolor_klash/state/game_event.dart';
+import 'package:kolor_klash/state/settings_bloc.dart';
+import 'package:kolor_klash/state/settings_state.dart';
 import '../../services/animation_service.dart';
 import '../../services/localization_service.dart';
 import 'tile_container.dart';
@@ -50,29 +52,33 @@ class _GameScreenState extends State<GameScreen>
     return AppTheme.buildScreenContainer(
       child: AppTheme.buildFadeTransition(
         controller: _animationController,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Header Section
-              _buildHeader(),
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, settingsState) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  // Header Section
+                  _buildHeader(),
 
-              const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-              // Game Grid (3x3)
-              _buildGameGrid(),
+                  // Game Grid (3x3)
+                  _buildGameGrid(),
 
-              const Spacer(),
+                  const Spacer(),
 
-              // Deck Section (1x3)
-              _buildDeckSection(),
+                  // Deck Section (1x3)
+                  _buildDeckSection(),
 
-              const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-              // Action Buttons
-              _buildActionButtons(),
-            ],
-          ),
+                  // Action Buttons
+                  _buildActionButtons(),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

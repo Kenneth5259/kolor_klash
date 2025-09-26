@@ -25,3 +25,9 @@ class AnimationsToggled extends SettingsEvent {
 
   AnimationsToggled(this.enabled);
 }
+
+class LanguageChanged extends SettingsEvent {
+  final String languageCode;
+
+  LanguageChanged(this.languageCode);
+}

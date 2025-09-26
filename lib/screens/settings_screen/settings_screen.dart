@@ -25,24 +25,27 @@ class _SettingsScreenState extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
-  String _selectedLanguage = 'English';
-  String _difficulty = 'Normal';
+  String _difficulty = 'normal';
 
-  final List<String> _languages = [
-    'English',
-    'Español',
-    'Français',
-    'Deutsch',
-    '日本語',
-    '中文',
-  ];
+  final Map<String, String> _languageCodeToName = {
+    'en': 'English',
+    'es': 'Español',
+    'fr': 'Français',
+    'de': 'Deutsch',
+    'ja': '日本語',
+    'zh': '中文',
+  };
 
-  final List<String> _difficulties = [
-    'Easy',
-    'Normal',
-    'Hard',
-    'Expert',
-  ];
+  final List<String> _languageCodes = ['en', 'es', 'fr', 'de', 'ja', 'zh'];
+
+  final List<String> _difficultyKeys = ['easy', 'normal', 'hard', 'expert'];
+
+  Map<String, String> get _difficultyDisplayNames => {
+    'easy': LocalizationService.difficultyEasy,
+    'normal': LocalizationService.difficultyNormal,
+    'hard': LocalizationService.difficultyHard,
+    'expert': LocalizationService.difficultyExpert,
+  };
 
   @override
   void initState() {
@@ -67,7 +70,11 @@ class _SettingsScreenState extends State<SettingsScreen>
         controller: _animationController,
         child: Column(
           children: [
-            _buildAppBar(),
+            BlocBuilder<SettingsBloc, SettingsState>(
+              builder: (context, state) {
+                return _buildAppBar();
+              },
+            ),
             Expanded(
               child: BlocBuilder<SettingsBloc, SettingsState>(
                 builder: (context, state) {
@@ -111,7 +118,7 @@ class _SettingsScreenState extends State<SettingsScreen>
 
                         _buildSectionTitle(LocalizationService.settingsPreferencesSection),
                         const SizedBox(height: 16),
-                        _buildPreferences(),
+                        _buildPreferences(settings),
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -195,9 +202,10 @@ class _SettingsScreenState extends State<SettingsScreen>
         _buildDropdownSetting(
           LocalizationService.settingsDifficulty,
           _difficulty,
-          _difficulties,
+          _difficultyKeys,
           (value) => setState(() => _difficulty = value!),
           Icons.speed,
+          displayMapper: (key) => _difficultyDisplayNames[key] ?? key,
         ),
         const SizedBox(height: 16),
 
@@ -212,15 +220,16 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _buildPreferences() {
+  Widget _buildPreferences(SettingsLoaded settings) {
     return Column(
       children: [
         _buildDropdownSetting(
           LocalizationService.settingsLanguage,
-          _selectedLanguage,
-          _languages,
-          (value) => setState(() => _selectedLanguage = value!),
+          settings.language,
+          _languageCodes,
+          (value) => context.read<SettingsBloc>().add(LanguageChanged(value!)),
           Icons.language,
+          displayMapper: (code) => _languageCodeToName[code] ?? code,
         ),
       ],
     );
@@ -339,8 +348,9 @@ class _SettingsScreenState extends State<SettingsScreen>
     T value,
     List<T> options,
     ValueChanged<T?> onChanged,
-    IconData icon,
-  ) {
+    IconData icon, {
+    String Function(T)? displayMapper,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -375,7 +385,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               return DropdownMenuItem<T>(
                 value: option,
                 child: Text(
-                  option.toString(),
+                  displayMapper?.call(option) ?? option.toString(),
                   style: AppTextStyles.secondaryButton.copyWith(fontSize: 14),
                 ),
               );

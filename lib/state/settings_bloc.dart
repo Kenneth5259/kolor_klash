@@ -10,6 +10,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SoundEffectsToggled>(_onSoundEffectsToggled);
     on<MasterVolumeChanged>(_onMasterVolumeChanged);
     on<AnimationsToggled>(_onAnimationsToggled);
+    on<LanguageChanged>(_onLanguageChanged);
   }
 
   Future<void> _onLoadSettings(LoadSettings event, Emitter<SettingsState> emit) async {
@@ -23,6 +24,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         soundEffectsEnabled: settings['soundEffectsEnabled'],
         masterVolume: settings['masterVolume'],
         animationsEnabled: settings['animationsEnabled'],
+        language: settings['language'],
       ));
     } catch (error) {
       emit(SettingsError('Failed to load settings: $error'));
@@ -81,6 +83,20 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         emit(currentState.copyWith(animationsEnabled: event.enabled));
       } catch (error) {
         emit(SettingsError('Failed to update animations setting: $error'));
+      }
+    }
+  }
+
+  Future<void> _onLanguageChanged(LanguageChanged event, Emitter<SettingsState> emit) async {
+    if (state is SettingsLoaded) {
+      final currentState = state as SettingsLoaded;
+
+      try {
+        await SettingsService.setLanguage(event.languageCode);
+
+        emit(currentState.copyWith(language: event.languageCode));
+      } catch (error) {
+        emit(SettingsError('Failed to update language setting: $error'));
       }
     }
   }

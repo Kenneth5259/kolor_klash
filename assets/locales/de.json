@@ -1,0 +1,69 @@
+{
+  "app": {
+    "version": "Version 2.0.0"
+  },
+  "home": {
+    "startGame": "SPIEL STARTEN",
+    "settings": "EINSTELLUNGEN",
+    "scores": "PUNKTE"
+  },
+  "game": {
+    "score": "PUNKTE",
+    "deck": "STAPEL",
+    "pause": "PAUSE",
+    "reroll": "WÜRFELN",
+    "gameOver": "SPIEL BEENDET",
+    "finalScore": "ENDPUNKTZAHL",
+    "startNewGame": "NEUES SPIEL"
+  },
+  "scores": {
+    "title": "BESTENLISTE",
+    "back": "ZURÜCK",
+    "noScores": "Noch keine Punkte!",
+    "noScoresSubtitle": "Spielen Sie ein Spiel, um Ihre Punkte hier zu sehen",
+    "clearScores": "Punkte Löschen",
+    "clearConfirmation": "Sind Sie sicher, dass Sie alle Punkte löschen möchten?",
+    "cancel": "Abbrechen",
+    "clear": "Löschen"
+  },
+  "settings": {
+    "title": "EINSTELLUNGEN",
+    "sections": {
+      "audio": "Audio-Einstellungen",
+      "gameplay": "Spiel-Einstellungen",
+      "preferences": "Einstellungen"
+    },
+    "audio": {
+      "soundEffects": "Soundeffekte",
+      "music": "Musik",
+      "masterVolume": "Hauptlautstärke"
+    },
+    "gameplay": {
+      "difficulty": "Schwierigkeit",
+      "animations": "Animationen"
+    },
+    "preferences": {
+      "language": "Sprache"
+    },
+    "difficulties": {
+      "easy": "Einfach",
+      "normal": "Normal",
+      "hard": "Schwer",
+      "expert": "Experte"
+    },
+    "languages": {
+      "english": "English",
+      "spanish": "Español",
+      "french": "Français",
+      "german": "Deutsch",
+      "japanese": "日本語",
+      "chinese": "中文"
+    },
+    "errors": {
+      "loading": "Fehler beim Laden der Einstellungen"
+    }
+  },
+  "common": {
+    "loading": "Laden..."
+  }
+}

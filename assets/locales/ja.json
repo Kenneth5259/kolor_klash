@@ -1,0 +1,69 @@
+{
+  "app": {
+    "version": "バージョン 2.0.0"
+  },
+  "home": {
+    "startGame": "ゲーム開始",
+    "settings": "設定",
+    "scores": "スコア"
+  },
+  "game": {
+    "score": "スコア",
+    "deck": "デッキ",
+    "pause": "一時停止",
+    "reroll": "再抽選",
+    "gameOver": "ゲームオーバー",
+    "finalScore": "最終スコア",
+    "startNewGame": "新しいゲーム"
+  },
+  "scores": {
+    "title": "ハイスコア",
+    "back": "戻る",
+    "noScores": "まだスコアがありません！",
+    "noScoresSubtitle": "ゲームをプレイしてスコアを確認しましょう",
+    "clearScores": "スコアをクリア",
+    "clearConfirmation": "すべてのスコアを削除してもよろしいですか？",
+    "cancel": "キャンセル",
+    "clear": "削除"
+  },
+  "settings": {
+    "title": "設定",
+    "sections": {
+      "audio": "オーディオ設定",
+      "gameplay": "ゲームプレイ設定",
+      "preferences": "環境設定"
+    },
+    "audio": {
+      "soundEffects": "効果音",
+      "music": "音楽",
+      "masterVolume": "マスターボリューム"
+    },
+    "gameplay": {
+      "difficulty": "難易度",
+      "animations": "アニメーション"
+    },
+    "preferences": {
+      "language": "言語"
+    },
+    "difficulties": {
+      "easy": "簡単",
+      "normal": "普通",
+      "hard": "難しい",
+      "expert": "エキスパート"
+    },
+    "languages": {
+      "english": "English",
+      "spanish": "Español",
+      "french": "Français",
+      "german": "Deutsch",
+      "japanese": "日本語",
+      "chinese": "中文"
+    },
+    "errors": {
+      "loading": "設定の読み込み中にエラーが発生しました"
+    }
+  },
+  "common": {
+    "loading": "読み込み中..."
+  }
+}

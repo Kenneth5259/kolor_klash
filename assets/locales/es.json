@@ -1,0 +1,69 @@
+{
+  "app": {
+    "version": "Versión 2.0.0"
+  },
+  "home": {
+    "startGame": "INICIAR JUEGO",
+    "settings": "CONFIGURACIÓN",
+    "scores": "PUNTUACIONES"
+  },
+  "game": {
+    "score": "PUNTOS",
+    "deck": "BARAJA",
+    "pause": "PAUSAR",
+    "reroll": "RELANZAR",
+    "gameOver": "JUEGO TERMINADO",
+    "finalScore": "PUNTUACIÓN FINAL",
+    "startNewGame": "NUEVO JUEGO"
+  },
+  "scores": {
+    "title": "MEJORES PUNTUACIONES",
+    "back": "VOLVER",
+    "noScores": "¡Aún no hay puntuaciones!",
+    "noScoresSubtitle": "Juega una partida para ver tus puntuaciones aquí",
+    "clearScores": "Borrar Puntuaciones",
+    "clearConfirmation": "¿Estás seguro de que quieres borrar todas las puntuaciones?",
+    "cancel": "Cancelar",
+    "clear": "Borrar"
+  },
+  "settings": {
+    "title": "CONFIGURACIÓN",
+    "sections": {
+      "audio": "Configuración de Audio",
+      "gameplay": "Configuración de Juego",
+      "preferences": "Preferencias"
+    },
+    "audio": {
+      "soundEffects": "Efectos de Sonido",
+      "music": "Música",
+      "masterVolume": "Volumen Principal"
+    },
+    "gameplay": {
+      "difficulty": "Dificultad",
+      "animations": "Animaciones"
+    },
+    "preferences": {
+      "language": "Idioma"
+    },
+    "difficulties": {
+      "easy": "Fácil",
+      "normal": "Normal",
+      "hard": "Difícil",
+      "expert": "Experto"
+    },
+    "languages": {
+      "english": "English",
+      "spanish": "Español",
+      "french": "Français",
+      "german": "Deutsch",
+      "japanese": "日本語",
+      "chinese": "中文"
+    },
+    "errors": {
+      "loading": "Error al cargar configuración"
+    }
+  },
+  "common": {
+    "loading": "Cargando..."
+  }
+}

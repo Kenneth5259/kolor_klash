@@ -34,7 +34,6 @@ class LocalizationService {
   static String get currentLanguage => _currentLanguage;
 
   // Convenience getters for common translations
-  static String get appSubtitle => translate('app.subtitle');
   static String get appVersion => translate('app.version');
 
   // Home screen
@@ -73,6 +72,12 @@ class LocalizationService {
   static String get settingsAnimations => translate('settings.gameplay.animations');
   static String get settingsLanguage => translate('settings.preferences.language');
   static String get settingsErrorLoading => translate('settings.errors.loading');
+
+  // Difficulty levels
+  static String get difficultyEasy => translate('settings.difficulties.easy');
+  static String get difficultyNormal => translate('settings.difficulties.normal');
+  static String get difficultyHard => translate('settings.difficulties.hard');
+  static String get difficultyExpert => translate('settings.difficulties.expert');
 
   // Common
   static String get commonLoading => translate('common.loading');

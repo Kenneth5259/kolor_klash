@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kolor_klash/theme/app_theme.dart';
 import 'package:kolor_klash/theme/app_colors.dart';
 import 'package:kolor_klash/models/score_entry.dart';
 import 'package:kolor_klash/services/score_service.dart';
+import 'package:kolor_klash/state/settings_bloc.dart';
+import 'package:kolor_klash/state/settings_state.dart';
 import '../../services/animation_service.dart';
 import '../../services/localization_service.dart';
 
@@ -49,10 +52,12 @@ class _ScoresScreenState extends State<ScoresScreen>
     return AppTheme.buildScreenContainer(
       child: AppTheme.buildFadeTransition(
         controller: _animationController,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, settingsState) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
               // Header
               _buildHeader(),
               const SizedBox(height: 20),
@@ -70,8 +75,10 @@ class _ScoresScreenState extends State<ScoresScreen>
                 icon: Icons.arrow_back,
                 onPressed: () => Navigator.of(context).pop(),
               ),
-            ],
-          ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -253,23 +260,27 @@ class _ScoresScreenState extends State<ScoresScreen>
   void _showClearDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.whiteOpacity(0.9),
-        title: Text(LocalizationService.scoresClearScores),
-        content: Text(LocalizationService.scoresClearConfirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(LocalizationService.scoresCancel),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _clearScores();
-            },
-            child: Text(LocalizationService.scoresClear),
-          ),
-        ],
+      builder: (context) => BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (context, settingsState) {
+          return AlertDialog(
+            backgroundColor: AppColors.whiteOpacity(0.9),
+            title: Text(LocalizationService.scoresClearScores),
+            content: Text(LocalizationService.scoresClearConfirmation),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(LocalizationService.scoresCancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _clearScores();
+                },
+                child: Text(LocalizationService.scoresClear),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

@@ -1,0 +1,69 @@
+{
+  "app": {
+    "version": "Version 2.0.0"
+  },
+  "home": {
+    "startGame": "COMMENCER",
+    "settings": "PARAMÈTRES",
+    "scores": "SCORES"
+  },
+  "game": {
+    "score": "SCORE",
+    "deck": "PAQUET",
+    "pause": "PAUSE",
+    "reroll": "RELANCER",
+    "gameOver": "PARTIE TERMINÉE",
+    "finalScore": "SCORE FINAL",
+    "startNewGame": "NOUVELLE PARTIE"
+  },
+  "scores": {
+    "title": "MEILLEURS SCORES",
+    "back": "RETOUR",
+    "noScores": "Aucun score pour l'instant !",
+    "noScoresSubtitle": "Jouez une partie pour voir vos scores ici",
+    "clearScores": "Effacer les Scores",
+    "clearConfirmation": "Êtes-vous sûr de vouloir effacer tous les scores ?",
+    "cancel": "Annuler",
+    "clear": "Effacer"
+  },
+  "settings": {
+    "title": "PARAMÈTRES",
+    "sections": {
+      "audio": "Paramètres Audio",
+      "gameplay": "Paramètres de Jeu",
+      "preferences": "Préférences"
+    },
+    "audio": {
+      "soundEffects": "Effets Sonores",
+      "music": "Musique",
+      "masterVolume": "Volume Principal"
+    },
+    "gameplay": {
+      "difficulty": "Difficulté",
+      "animations": "Animations"
+    },
+    "preferences": {
+      "language": "Langue"
+    },
+    "difficulties": {
+      "easy": "Facile",
+      "normal": "Normal",
+      "hard": "Difficile",
+      "expert": "Expert"
+    },
+    "languages": {
+      "english": "English",
+      "spanish": "Español",
+      "french": "Français",
+      "german": "Deutsch",
+      "japanese": "日本語",
+      "chinese": "中文"
+    },
+    "errors": {
+      "loading": "Erreur lors du chargement des paramètres"
+    }
+  },
+  "common": {
+    "loading": "Chargement..."
+  }
+}

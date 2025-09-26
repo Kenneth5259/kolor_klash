@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kolor_klash/theme/app_theme.dart';
 import 'package:kolor_klash/theme/app_text_styles.dart';
 import 'package:kolor_klash/screens/game_screen/game_screen.dart';
 import 'package:kolor_klash/screens/scores_screen/scores_screen.dart';
 import 'package:kolor_klash/screens/settings_screen/settings_screen.dart';
+import 'package:kolor_klash/state/settings_bloc.dart';
+import 'package:kolor_klash/state/settings_state.dart';
 import '../../services/animation_service.dart';
 import '../../services/localization_service.dart';
 
@@ -39,11 +42,13 @@ class _HomeScreenState extends State<HomeScreen>
     return AppTheme.buildScreenContainer(
       child: AppTheme.buildFadeTransition(
         controller: _animationController,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, settingsState) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
               const Spacer(flex: 2),
 
               // Game Title
@@ -56,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen>
 
               // Subtitle
               Text(
-                LocalizationService.appSubtitle,
+                'Match • Merge • Master',
                 style: AppTextStyles.subtitle,
               ),
 
@@ -119,8 +124,10 @@ class _HomeScreenState extends State<HomeScreen>
               ),
 
               const SizedBox(height: 16),
-            ],
-          ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

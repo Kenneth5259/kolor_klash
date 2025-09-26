@@ -1,0 +1,69 @@
+{
+  "app": {
+    "version": "版本 2.0.0"
+  },
+  "home": {
+    "startGame": "开始游戏",
+    "settings": "设置",
+    "scores": "分数"
+  },
+  "game": {
+    "score": "分数",
+    "deck": "牌组",
+    "pause": "暂停",
+    "reroll": "重新抽取",
+    "gameOver": "游戏结束",
+    "finalScore": "最终分数",
+    "startNewGame": "新游戏"
+  },
+  "scores": {
+    "title": "最高分",
+    "back": "返回",
+    "noScores": "还没有分数！",
+    "noScoresSubtitle": "玩游戏后在这里查看您的分数",
+    "clearScores": "清除分数",
+    "clearConfirmation": "您确定要清除所有分数吗？",
+    "cancel": "取消",
+    "clear": "清除"
+  },
+  "settings": {
+    "title": "设置",
+    "sections": {
+      "audio": "音频设置",
+      "gameplay": "游戏设置",
+      "preferences": "偏好设置"
+    },
+    "audio": {
+      "soundEffects": "音效",
+      "music": "音乐",
+      "masterVolume": "主音量"
+    },
+    "gameplay": {
+      "difficulty": "难度",
+      "animations": "动画"
+    },
+    "preferences": {
+      "language": "语言"
+    },
+    "difficulties": {
+      "easy": "简单",
+      "normal": "普通",
+      "hard": "困难",
+      "expert": "专家"
+    },
+    "languages": {
+      "english": "English",
+      "spanish": "Español",
+      "french": "Français",
+      "german": "Deutsch",
+      "japanese": "日本語",
+      "chinese": "中文"
+    },
+    "errors": {
+      "loading": "加载设置时出错"
+    }
+  },
+  "common": {
+    "loading": "加载中..."
+  }
+}
