@@ -41,6 +41,19 @@ enum GameDifficulty {
     }
   }
 
+  double get scoreMultiplier {
+    switch (this) {
+      case GameDifficulty.easy:
+        return 0.75;
+      case GameDifficulty.normal:
+        return 1.0;
+      case GameDifficulty.hard:
+        return 1.5;
+      case GameDifficulty.expert:
+        return 2.0;
+    }
+  }
+
   String get displayName {
     switch (this) {
       case GameDifficulty.easy:

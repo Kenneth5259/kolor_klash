@@ -80,7 +80,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         : currentState.rerollsAvailable;
 
     // Check for color matches and process them
-    final matchResult = _processColorMatches(updatedGrid);
+    final matchResult = _processColorMatches(updatedGrid, currentState.difficulty);
     final processedGrid = matchResult['grid'] as List<TileContainer>;
     final scoreIncrease = matchResult['score'] as int;
     final newScore = currentState.score + scoreIncrease;
@@ -156,7 +156,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   // Process color matches and return updated grid and score
-  Map<String, dynamic> _processColorMatches(List<TileContainer> grid) {
+  Map<String, dynamic> _processColorMatches(List<TileContainer> grid, GameDifficulty difficulty) {
     final gridToProcess = List<TileContainer>.from(grid);
     int totalScore = 0;
 
@@ -164,8 +164,11 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     final matchedColumns = _findColorMatches(gridToProcess);
 
     if (matchedColumns.isNotEmpty) {
-      // Calculate score based on number of columns flushed
-      totalScore = matchedColumns.length * 10; // 10 points per flushed column
+      // Calculate base score based on number of columns flushed
+      final baseScore = matchedColumns.length * 10; // 10 points per flushed column
+
+      // Apply difficulty multiplier
+      totalScore = (baseScore * difficulty.scoreMultiplier).round();
 
       // Remove matched colors (reset to transparent)
       final processedGrid = _removeMatchedColors(gridToProcess, matchedColumns);
