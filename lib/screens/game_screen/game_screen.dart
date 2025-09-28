@@ -19,20 +19,45 @@ class GameScreen extends StatefulWidget {
   @override
   State<GameScreen> createState() => _GameScreenState();
 
-  // Static method to create the screen with BlocProvider
-  static Widget create() {
+  // Static method to create screen for new game
+  static Widget createNew() {
     return BlocProvider(
       create: (context) {
+        final gameBloc = GameBloc();
+
         // Get current difficulty from settings
         final settingsState = context.read<SettingsBloc>().state;
         final difficulty = settingsState is SettingsLoaded
             ? settingsState.difficulty
             : GameDifficulty.normal;
 
-        return GameBloc()..add(GameStarted(difficulty: difficulty));
+        // Start a new game with current difficulty
+        gameBloc.add(GameStarted(difficulty: difficulty));
+
+        return gameBloc;
       },
       child: const GameScreen(),
     );
+  }
+
+  // Static method to create screen for resuming saved game
+  static Widget createResume() {
+    return BlocProvider(
+      create: (context) {
+        final gameBloc = GameBloc();
+
+        // Load the saved game
+        gameBloc.add(GameLoaded());
+
+        return gameBloc;
+      },
+      child: const GameScreen(),
+    );
+  }
+
+  // Legacy method - keep for backward compatibility but use createNew by default
+  static Widget create() {
+    return createNew();
   }
 }
 

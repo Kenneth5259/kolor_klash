@@ -5,6 +5,7 @@ import '../models/game_deck.dart';
 import '../models/game_difficulty.dart';
 import '../services/score_service.dart';
 import '../services/audio_service.dart';
+import '../services/game_persistence_service.dart';
 import 'game_event.dart';
 import 'game_state.dart';
 
@@ -14,10 +15,16 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     on<TilePlaced>(_onTilePlaced);
     on<GameReset>(_onGameReset);
     on<DeckRerolled>(_onDeckRerolled);
+    on<GameLoaded>(_onGameLoaded);
+    on<GameSaved>(_onGameSaved);
   }
 
   void _onGameStarted(GameStarted event, Emitter<GameState> emit) {
-    emit(GameInProgress.initial(event.difficulty));
+    final newGameState = GameInProgress.initial(event.difficulty);
+    emit(newGameState);
+
+    // Auto-save the new game state
+    _autoSaveGame(newGameState);
   }
 
   void _onTilePlaced(TilePlaced event, Emitter<GameState> emit) {
@@ -99,6 +106,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       // Save the score when game ends
       ScoreService.saveScore(newScore);
 
+      // Clear saved game since game is over
+      GamePersistenceService.clearSavedGame();
+
       emit(GameOver(
         finalScore: newScore,
         finalGrid: processedGrid,
@@ -107,13 +117,17 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     }
 
     // Emit updated game state
-    emit(currentState.copyWith(
+    final newGameState = currentState.copyWith(
       grid: processedGrid,
       deck: finalDeck,
       score: newScore,
       rerollsAvailable: newRerolls,
       deckRefillCount: newRefillCount,
-    ));
+    );
+    emit(newGameState);
+
+    // Auto-save after successful tile placement
+    _autoSaveGame(newGameState);
   }
 
   void _onGameReset(GameReset event, Emitter<GameState> emit) {
@@ -122,7 +136,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         (state is GameInProgress
             ? (state as GameInProgress).difficulty
             : GameDifficulty.normal);
-    emit(GameInProgress.initial(difficulty));
+
+    final newGameState = GameInProgress.initial(difficulty);
+    emit(newGameState);
+
+    // Auto-save the new game state
+    _autoSaveGame(newGameState);
   }
 
   void _onDeckRerolled(DeckRerolled event, Emitter<GameState> emit) {
@@ -149,10 +168,14 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     AudioService.playSwooshSound();
 
     // Emit updated state with new deck and decreased rerolls
-    emit(currentState.copyWith(
+    final newGameState = currentState.copyWith(
       deck: newDeck,
       rerollsAvailable: newRerolls,
-    ));
+    );
+    emit(newGameState);
+
+    // Auto-save after deck reroll
+    _autoSaveGame(newGameState);
   }
 
   // Process color matches and return updated grid and score
@@ -300,5 +323,39 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       }
     }
     return true; // No valid moves found
+  }
+
+  Future<void> _onGameLoaded(GameLoaded event, Emitter<GameState> emit) async {
+    try {
+      final savedGame = await GamePersistenceService.loadGameState();
+      if (savedGame != null) {
+        emit(savedGame);
+      }
+    } catch (error) {
+      emit(GameError(
+        message: 'Failed to load saved game: $error',
+        previousState: state is GameInProgress ? state as GameInProgress : GameInProgress.initial(),
+      ));
+    }
+  }
+
+  Future<void> _onGameSaved(GameSaved event, Emitter<GameState> emit) async {
+    if (state is GameInProgress) {
+      try {
+        await GamePersistenceService.saveGameState(state as GameInProgress);
+      } catch (error) {
+        // Don't emit error state for save failures, just log
+        print('Failed to save game: $error');
+      }
+    }
+  }
+
+  // Auto-save helper method
+  Future<void> _autoSaveGame(GameInProgress gameState) async {
+    try {
+      await GamePersistenceService.saveGameState(gameState);
+    } catch (error) {
+      print('Auto-save failed: $error');
+    }
   }
 }

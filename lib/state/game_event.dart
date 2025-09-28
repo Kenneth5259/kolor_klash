@@ -36,3 +36,9 @@ class ColorFadeCompleted extends GameEvent {
 
   ColorFadeCompleted({required this.fadedColumns});
 }
+
+// Event to load a saved game
+class GameLoaded extends GameEvent {}
+
+// Event to save the current game
+class GameSaved extends GameEvent {}
