@@ -6,6 +6,7 @@ import 'package:kolor_klash/theme/app_colors.dart';
 import '../../state/settings_bloc.dart';
 import '../../state/settings_event.dart';
 import '../../state/settings_state.dart';
+import '../../models/game_difficulty.dart';
 import '../../services/animation_service.dart';
 import '../../services/localization_service.dart';
 
@@ -25,8 +26,6 @@ class _SettingsScreenState extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
-  String _difficulty = 'normal';
-
   final Map<String, String> _languageCodeToName = {
     'en': 'English',
     'es': 'Español',
@@ -38,13 +37,13 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   final List<String> _languageCodes = ['en', 'es', 'fr', 'de', 'ja', 'zh'];
 
-  final List<String> _difficultyKeys = ['easy', 'normal', 'hard', 'expert'];
+  final List<GameDifficulty> _difficultyOptions = GameDifficulty.values;
 
-  Map<String, String> get _difficultyDisplayNames => {
-    'easy': LocalizationService.difficultyEasy,
-    'normal': LocalizationService.difficultyNormal,
-    'hard': LocalizationService.difficultyHard,
-    'expert': LocalizationService.difficultyExpert,
+  Map<GameDifficulty, String> get _difficultyDisplayNames => {
+    GameDifficulty.easy: LocalizationService.difficultyEasy,
+    GameDifficulty.normal: LocalizationService.difficultyNormal,
+    GameDifficulty.hard: LocalizationService.difficultyHard,
+    GameDifficulty.expert: LocalizationService.difficultyExpert,
   };
 
   @override
@@ -199,16 +198,15 @@ class _SettingsScreenState extends State<SettingsScreen>
   Widget _buildGameplaySettings(SettingsLoaded settings) {
     return Column(
       children: [
-        _buildDropdownSetting(
+        _buildDropdownSetting<GameDifficulty>(
           LocalizationService.settingsDifficulty,
-          _difficulty,
-          _difficultyKeys,
-          (value) => setState(() => _difficulty = value!),
+          settings.difficulty,
+          _difficultyOptions,
+          (value) => context.read<SettingsBloc>().add(DifficultyChanged(value!)),
           Icons.speed,
-          displayMapper: (key) => _difficultyDisplayNames[key] ?? key,
+          displayMapper: (difficulty) => _difficultyDisplayNames[difficulty] ?? difficulty.displayName,
         ),
         const SizedBox(height: 16),
-
 
         _buildSwitchSetting(
           LocalizationService.settingsAnimations,

@@ -35,55 +35,7 @@ class GameTileWidget extends StatelessWidget {
             ],
           ),
           child: Row(
-            children: [
-              // Column 1
-              Expanded(
-                child: Container(
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: gameTile.columnColors[0] ?? Colors.transparent,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                    ),
-                    border: Border(
-                      right: BorderSide(
-                        color: AppColors.whiteOpacity(0.4),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // Column 2
-              Expanded(
-                child: Container(
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: gameTile.columnColors[1] ?? Colors.transparent,
-                    border: Border(
-                      right: BorderSide(
-                        color: AppColors.whiteOpacity(0.4),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // Column 3
-              Expanded(
-                child: Container(
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: gameTile.columnColors[2] ?? Colors.transparent,
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            children: _buildFeedbackColumns(),
           ),
         ),
       ),
@@ -106,56 +58,74 @@ class GameTileWidget extends StatelessWidget {
         color: AppColors.whiteOpacity(0.1),
       ),
       child: Row(
-        children: [
-          // Column 1
-          Expanded(
-            child: Container(
-              height: double.infinity,
-              decoration: BoxDecoration(
-                color: gameTile.columnColors[0] ?? Colors.transparent,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(11),
-                  bottomLeft: Radius.circular(11),
-                ),
-                border: Border(
-                  right: BorderSide(
-                    color: AppColors.whiteOpacity(0.2),
-                    width: 0.5,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Column 2
-          Expanded(
-            child: Container(
-              height: double.infinity,
-              decoration: BoxDecoration(
-                color: gameTile.columnColors[1] ?? Colors.transparent,
-                border: Border(
-                  right: BorderSide(
-                    color: AppColors.whiteOpacity(0.2),
-                    width: 0.5,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Column 3
-          Expanded(
-            child: Container(
-              height: double.infinity,
-              decoration: BoxDecoration(
-                color: gameTile.columnColors[2] ?? Colors.transparent,
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(11),
-                  bottomRight: Radius.circular(11),
-                ),
-              ),
-            ),
-          ),
-        ],
+        children: _buildColumns(),
       ),
     );
+  }
+
+  List<Widget> _buildFeedbackColumns() {
+    final columnColors = gameTile.columnColors;
+    final columnCount = columnColors.length;
+
+    return List.generate(columnCount, (index) {
+      final isFirst = index == 0;
+      final isLast = index == columnCount - 1;
+
+      return Expanded(
+        child: Container(
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: columnColors[index] ?? Colors.transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: isFirst ? const Radius.circular(10) : Radius.zero,
+              bottomLeft: isFirst ? const Radius.circular(10) : Radius.zero,
+              topRight: isLast ? const Radius.circular(10) : Radius.zero,
+              bottomRight: isLast ? const Radius.circular(10) : Radius.zero,
+            ),
+            border: Border(
+              right: isLast
+                  ? BorderSide.none
+                  : BorderSide(
+                      color: AppColors.whiteOpacity(0.4),
+                      width: 1,
+                    ),
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  List<Widget> _buildColumns() {
+    final columnColors = gameTile.columnColors;
+    final columnCount = columnColors.length;
+
+    return List.generate(columnCount, (index) {
+      final isFirst = index == 0;
+      final isLast = index == columnCount - 1;
+
+      return Expanded(
+        child: Container(
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: columnColors[index] ?? Colors.transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: isFirst ? const Radius.circular(11) : Radius.zero,
+              bottomLeft: isFirst ? const Radius.circular(11) : Radius.zero,
+              topRight: isLast ? const Radius.circular(11) : Radius.zero,
+              bottomRight: isLast ? const Radius.circular(11) : Radius.zero,
+            ),
+            border: Border(
+              right: isLast
+                  ? BorderSide.none
+                  : BorderSide(
+                      color: AppColors.whiteOpacity(0.2),
+                      width: 0.5,
+                    ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 }

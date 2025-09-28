@@ -1,7 +1,13 @@
+import '../models/game_difficulty.dart';
+
 abstract class GameEvent {}
 
 // Event to start a new game
-class GameStarted extends GameEvent {}
+class GameStarted extends GameEvent {
+  final GameDifficulty difficulty;
+
+  GameStarted({this.difficulty = GameDifficulty.normal});
+}
 
 // Event to attempt placing a game tile on a tile container
 class TilePlaced extends GameEvent {
@@ -15,7 +21,11 @@ class TilePlaced extends GameEvent {
 }
 
 // Event to reset the game
-class GameReset extends GameEvent {}
+class GameReset extends GameEvent {
+  final GameDifficulty? difficulty;
+
+  GameReset({this.difficulty});
+}
 
 // Event to reroll the deck
 class DeckRerolled extends GameEvent {}

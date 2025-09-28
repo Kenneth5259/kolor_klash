@@ -1,5 +1,6 @@
 import '../models/tile_container.dart';
 import '../models/game_deck.dart';
+import '../models/game_difficulty.dart';
 
 abstract class GameState {}
 
@@ -13,6 +14,7 @@ class GameInProgress extends GameState {
   final int score;
   final int rerollsAvailable; // Number of rerolls the player has
   final int deckRefillCount; // Track how many times deck has been refilled
+  final GameDifficulty difficulty; // Current game difficulty
 
   GameInProgress({
     required this.grid,
@@ -20,16 +22,19 @@ class GameInProgress extends GameState {
     required this.score,
     required this.rerollsAvailable,
     required this.deckRefillCount,
+    this.difficulty = GameDifficulty.normal,
   });
 
-  // Create initial game state
-  factory GameInProgress.initial() {
+  // Create initial game state with specified difficulty
+  factory GameInProgress.initial([GameDifficulty? difficulty]) {
+    final gameDifficulty = difficulty ?? GameDifficulty.normal;
     return GameInProgress(
-      grid: List.generate(9, (index) => TileContainer.empty(index + 1)),
-      deck: GameDeck.newDeck(),
+      grid: List.generate(9, (index) => TileContainer.empty(index + 1, gameDifficulty)),
+      deck: GameDeck.newDeck(gameDifficulty),
       score: 0,
       rerollsAvailable: 2, // Start with 2 rerolls
       deckRefillCount: 0,
+      difficulty: gameDifficulty,
     );
   }
 
@@ -39,6 +44,7 @@ class GameInProgress extends GameState {
     int? score,
     int? rerollsAvailable,
     int? deckRefillCount,
+    GameDifficulty? difficulty,
   }) {
     return GameInProgress(
       grid: grid ?? this.grid,
@@ -46,6 +52,7 @@ class GameInProgress extends GameState {
       score: score ?? this.score,
       rerollsAvailable: rerollsAvailable ?? this.rerollsAvailable,
       deckRefillCount: deckRefillCount ?? this.deckRefillCount,
+      difficulty: difficulty ?? this.difficulty,
     );
   }
 }
@@ -79,6 +86,7 @@ class GameFadingColors extends GameState {
   final int score;
   final int rerollsAvailable;
   final int deckRefillCount;
+  final GameDifficulty difficulty;
   final Set<String> fadingColumns; // Format: 'containerIndex-columnIndex'
 
   GameFadingColors({
@@ -87,6 +95,7 @@ class GameFadingColors extends GameState {
     required this.score,
     required this.rerollsAvailable,
     required this.deckRefillCount,
+    this.difficulty = GameDifficulty.normal,
     required this.fadingColumns,
   });
 
@@ -98,6 +107,7 @@ class GameFadingColors extends GameState {
       score: score,
       rerollsAvailable: rerollsAvailable,
       deckRefillCount: deckRefillCount,
+      difficulty: difficulty,
     );
   }
 }

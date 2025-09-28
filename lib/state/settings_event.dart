@@ -1,3 +1,5 @@
+import '../models/game_difficulty.dart';
+
 abstract class SettingsEvent {}
 
 class LoadSettings extends SettingsEvent {}
@@ -30,4 +32,10 @@ class LanguageChanged extends SettingsEvent {
   final String languageCode;
 
   LanguageChanged(this.languageCode);
+}
+
+class DifficultyChanged extends SettingsEvent {
+  final GameDifficulty difficulty;
+
+  DifficultyChanged(this.difficulty);
 }

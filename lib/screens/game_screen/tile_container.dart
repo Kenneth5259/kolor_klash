@@ -20,7 +20,7 @@ class TileContainerWidget extends StatefulWidget {
 }
 
 class _TileContainerWidgetState extends State<TileContainerWidget> {
-  List<Color?> _previousColors = [null, null, null];
+  List<Color?> _previousColors = [];
 
   @override
   void initState() {
@@ -35,6 +35,11 @@ class _TileContainerWidgetState extends State<TileContainerWidget> {
   }
 
   Duration _getAnimationDuration(int columnIndex) {
+    if (columnIndex >= _previousColors.length ||
+        columnIndex >= widget.tileContainer.columnColors.length) {
+      return Duration.zero;
+    }
+
     final previousColor = _previousColors[columnIndex];
     final currentColor = widget.tileContainer.columnColors[columnIndex];
 
@@ -79,64 +84,45 @@ class _TileContainerWidgetState extends State<TileContainerWidget> {
             color: AppColors.whiteOpacity(0.08),
           ),
           child: Row(
-            children: [
-              // Column 1
-              Expanded(
-                child: AnimatedContainer(
-                  duration: _getAnimationDuration(0),
-                  curve: AnimationService.getCurve(Curves.easeOut),
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: widget.tileContainer.columnColors[0] ?? Colors.transparent,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(11),
-                      bottomLeft: Radius.circular(11),
-                    ),
-                    border: Border(
-                      right: BorderSide(
-                        color: AppColors.whiteOpacity(0.2),
-                        width: 0.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // Column 2
-              Expanded(
-                child: AnimatedContainer(
-                  duration: _getAnimationDuration(1),
-                  curve: AnimationService.getCurve(Curves.easeOut),
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: widget.tileContainer.columnColors[1] ?? Colors.transparent,
-                    border: Border(
-                      right: BorderSide(
-                        color: AppColors.whiteOpacity(0.2),
-                        width: 0.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // Column 3
-              Expanded(
-                child: AnimatedContainer(
-                  duration: _getAnimationDuration(2),
-                  curve: AnimationService.getCurve(Curves.easeOut),
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: widget.tileContainer.columnColors[2] ?? Colors.transparent,
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(11),
-                      bottomRight: Radius.circular(11),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            children: _buildColumns(),
           ),
         );
       },
     );
+  }
+
+  List<Widget> _buildColumns() {
+    final columnColors = widget.tileContainer.columnColors;
+    final columnCount = columnColors.length;
+
+    return List.generate(columnCount, (index) {
+      final isFirst = index == 0;
+      final isLast = index == columnCount - 1;
+
+      return Expanded(
+        child: AnimatedContainer(
+          duration: _getAnimationDuration(index),
+          curve: AnimationService.getCurve(Curves.easeOut),
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: columnColors[index] ?? Colors.transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: isFirst ? const Radius.circular(11) : Radius.zero,
+              bottomLeft: isFirst ? const Radius.circular(11) : Radius.zero,
+              topRight: isLast ? const Radius.circular(11) : Radius.zero,
+              bottomRight: isLast ? const Radius.circular(11) : Radius.zero,
+            ),
+            border: Border(
+              right: isLast
+                  ? BorderSide.none
+                  : BorderSide(
+                      color: AppColors.whiteOpacity(0.2),
+                      width: 0.5,
+                    ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 }

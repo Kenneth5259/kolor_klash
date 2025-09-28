@@ -1,3 +1,5 @@
+import '../models/game_difficulty.dart';
+
 abstract class SettingsState {}
 
 class SettingsInitial extends SettingsState {}
@@ -10,6 +12,7 @@ class SettingsLoaded extends SettingsState {
   final double masterVolume;
   final bool animationsEnabled;
   final String language;
+  final GameDifficulty difficulty;
 
   SettingsLoaded({
     required this.musicEnabled,
@@ -17,6 +20,7 @@ class SettingsLoaded extends SettingsState {
     required this.masterVolume,
     required this.animationsEnabled,
     required this.language,
+    this.difficulty = GameDifficulty.normal,
   });
 
   factory SettingsLoaded.initial() {
@@ -35,6 +39,7 @@ class SettingsLoaded extends SettingsState {
     double? masterVolume,
     bool? animationsEnabled,
     String? language,
+    GameDifficulty? difficulty,
   }) {
     return SettingsLoaded(
       musicEnabled: musicEnabled ?? this.musicEnabled,
@@ -42,6 +47,7 @@ class SettingsLoaded extends SettingsState {
       masterVolume: masterVolume ?? this.masterVolume,
       animationsEnabled: animationsEnabled ?? this.animationsEnabled,
       language: language ?? this.language,
+      difficulty: difficulty ?? this.difficulty,
     );
   }
 }

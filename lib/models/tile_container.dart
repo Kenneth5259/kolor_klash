@@ -1,27 +1,34 @@
 import 'package:flutter/material.dart';
 import 'game_tile.dart';
+import 'game_difficulty.dart';
 
 // Represents a tile container in the 3x3 grid (positions 1-9)
 class TileContainer {
   final int position; // 1-9 for the 3x3 grid
-  final List<Color?> columnColors; // 3 columns, null means transparent/open
+  final List<Color?> columnColors; // 3 or 4 columns depending on difficulty, null means transparent/open
 
   const TileContainer({
     required this.position,
     required this.columnColors,
   });
 
-  // Create an empty tile container
-  factory TileContainer.empty(int position) {
+  // Create an empty tile container based on difficulty
+  factory TileContainer.empty(int position, [GameDifficulty? difficulty]) {
+    final gameDifficulty = difficulty ?? GameDifficulty.normal;
     return TileContainer(
       position: position,
-      columnColors: [null, null, null],
+      columnColors: List.filled(gameDifficulty.columnCount, null),
     );
   }
 
   // Check if a game tile can be placed on this container
   bool canAcceptTile(GameTile gameTile) {
-    for (int i = 0; i < 3; i++) {
+    // Ensure both tile and container have the same number of columns
+    if (gameTile.columnColors.length != columnColors.length) {
+      return false;
+    }
+
+    for (int i = 0; i < columnColors.length; i++) {
       // If the game tile has a color in column i
       if (gameTile.columnColors[i] != null) {
         // But this container already has a color in column i
@@ -40,7 +47,7 @@ class TileContainer {
     }
 
     final newColumnColors = List<Color?>.from(columnColors);
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < columnColors.length; i++) {
       if (gameTile.columnColors[i] != null) {
         newColumnColors[i] = gameTile.columnColors[i];
       }
@@ -55,7 +62,7 @@ class TileContainer {
   // Get indices of open (transparent) columns
   List<int> get openColumnIndices {
     final openCols = <int>[];
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < columnColors.length; i++) {
       if (columnColors[i] == null) {
         openCols.add(i);
       }

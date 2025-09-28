@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/tile_container.dart';
 import '../models/game_deck.dart';
+import '../models/game_difficulty.dart';
 import '../services/score_service.dart';
 import '../services/audio_service.dart';
 import 'game_event.dart';
@@ -16,7 +17,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   void _onGameStarted(GameStarted event, Emitter<GameState> emit) {
-    emit(GameInProgress.initial());
+    emit(GameInProgress.initial(event.difficulty));
   }
 
   void _onTilePlaced(TilePlaced event, Emitter<GameState> emit) {
@@ -64,7 +65,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     final updatedDeck = currentState.deck.removeTile(event.gameTileId);
 
     // Refill deck if empty and track refills
-    final finalDeck = updatedDeck.refillIfEmpty();
+    final finalDeck = updatedDeck.refillIfEmpty(currentState.difficulty);
     final wasRefilled = updatedDeck.tiles.isEmpty && finalDeck.tiles.isNotEmpty;
     final newRefillCount = wasRefilled ? currentState.deckRefillCount + 1 : currentState.deckRefillCount;
 
@@ -116,7 +117,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   void _onGameReset(GameReset event, Emitter<GameState> emit) {
-    emit(GameInProgress.initial());
+    // Use provided difficulty, or fall back to current state difficulty, or default to normal
+    final difficulty = event.difficulty ??
+        (state is GameInProgress
+            ? (state as GameInProgress).difficulty
+            : GameDifficulty.normal);
+    emit(GameInProgress.initial(difficulty));
   }
 
   void _onDeckRerolled(DeckRerolled event, Emitter<GameState> emit) {
@@ -136,7 +142,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     }
 
     // Create new deck and decrease reroll count
-    final newDeck = GameDeck.newDeck();
+    final newDeck = GameDeck.newDeck(currentState.difficulty);
     final newRerolls = currentState.rerollsAvailable - 1;
 
     // Play swoosh sound when deck is rerolled
@@ -194,18 +200,27 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     return matchedColumns;
   }
 
-  // Find matches within a single tile container (all 3 columns same color)
+  // Find matches within a single tile container (all columns same color)
   Set<String> _findSingleTileMatches(TileContainer container, int containerIndex) {
     final matchedColumns = <String>{};
     final colors = container.columnColors;
 
-    // Check if all 3 columns have the same non-null color
-    if (colors[0] != null && colors[1] != null && colors[2] != null) {
-      if (_colorsEqual(colors[0]!, colors[1]!) && _colorsEqual(colors[1]!, colors[2]!)) {
-        // All 3 columns match - add all to matched set
-        matchedColumns.add('$containerIndex-0');
-        matchedColumns.add('$containerIndex-1');
-        matchedColumns.add('$containerIndex-2');
+    // Check if all columns have the same non-null color
+    if (colors.every((color) => color != null)) {
+      final firstColor = colors[0]!;
+      bool allMatch = true;
+      for (final color in colors) {
+        if (color == null || !_colorsEqual(color, firstColor)) {
+          allMatch = false;
+          break;
+        }
+      }
+
+      if (allMatch) {
+        // All columns match - add all to matched set
+        for (int i = 0; i < colors.length; i++) {
+          matchedColumns.add('$containerIndex-$i');
+        }
       }
     }
 
@@ -228,9 +243,10 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       final commonColors = tileColors.reduce((a, b) => a.intersection(b));
       for (final color in commonColors) {
         for (final tileIndex in line) {
-          for (int col = 0; col < 3; col++) {
-            if (grid[tileIndex].columnColors[col] != null &&
-                _colorsEqual(grid[tileIndex].columnColors[col]!, color)) {
+          final colors = grid[tileIndex].columnColors;
+          for (int col = 0; col < colors.length; col++) {
+            if (colors[col] != null &&
+                _colorsEqual(colors[col]!, color)) {
               matchedColumns.add('$tileIndex-$col');
             }
           }
@@ -257,7 +273,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       final newColors = List<Color?>.from(container.columnColors);
 
       // Check each column in this container
-      for (int col = 0; col < 3; col++) {
+      for (int col = 0; col < newColors.length; col++) {
         final columnKey = '$containerIndex-$col';
         if (matchedColumns.contains(columnKey)) {
           newColors[col] = null; // Reset to transparent

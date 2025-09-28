@@ -7,6 +7,7 @@ import 'package:kolor_klash/state/game_state.dart';
 import 'package:kolor_klash/state/game_event.dart';
 import 'package:kolor_klash/state/settings_bloc.dart';
 import 'package:kolor_klash/state/settings_state.dart';
+import 'package:kolor_klash/models/game_difficulty.dart';
 import '../../services/animation_service.dart';
 import '../../services/localization_service.dart';
 import 'tile_container.dart';
@@ -21,7 +22,15 @@ class GameScreen extends StatefulWidget {
   // Static method to create the screen with BlocProvider
   static Widget create() {
     return BlocProvider(
-      create: (context) => GameBloc()..add(GameStarted()),
+      create: (context) {
+        // Get current difficulty from settings
+        final settingsState = context.read<SettingsBloc>().state;
+        final difficulty = settingsState is SettingsLoaded
+            ? settingsState.difficulty
+            : GameDifficulty.normal;
+
+        return GameBloc()..add(GameStarted(difficulty: difficulty));
+      },
       child: const GameScreen(),
     );
   }
@@ -135,7 +144,13 @@ class _GameScreenState extends State<GameScreen>
             // Menu Button
             IconButton(
               onPressed: () {
-                context.read<GameBloc>().add(GameReset());
+                // Get current difficulty from settings when resetting
+                final settingsState = context.read<SettingsBloc>().state;
+                final difficulty = settingsState is SettingsLoaded
+                    ? settingsState.difficulty
+                    : GameDifficulty.normal;
+
+                context.read<GameBloc>().add(GameReset(difficulty: difficulty));
               },
               icon: Icon(
                 Icons.refresh,
@@ -253,7 +268,13 @@ class _GameScreenState extends State<GameScreen>
           const SizedBox(height: 32),
           ElevatedButton.icon(
             onPressed: () {
-              context.read<GameBloc>().add(GameReset());
+              // Get current difficulty from settings when resetting
+              final settingsState = context.read<SettingsBloc>().state;
+              final difficulty = settingsState is SettingsLoaded
+                  ? settingsState.difficulty
+                  : GameDifficulty.normal;
+
+              context.read<GameBloc>().add(GameReset(difficulty: difficulty));
             },
             icon: Icon(
               Icons.refresh,

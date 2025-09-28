@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'game_difficulty.dart';
 
 // Game colors available for tiles
 class GameColors {
@@ -18,23 +19,28 @@ class GameColors {
 // Represents a game tile from the deck (D1, D2, D3)
 class GameTile {
   final String id;
-  final List<Color?> columnColors; // 3 columns, null means transparent
+  final List<Color?> columnColors; // 3 or 4 columns depending on difficulty, null means transparent
 
   const GameTile({
     required this.id,
     required this.columnColors,
   });
 
-  // Generate a random game tile with 1-2 colored columns
-  factory GameTile.random(String id) {
+  // Generate a random game tile based on difficulty
+  factory GameTile.random(String id, [GameDifficulty? difficulty]) {
+    final gameDifficulty = difficulty ?? GameDifficulty.normal;
     final random = Random();
-    final numColoredColumns = random.nextInt(2) + 1; // 1 or 2 colored columns
-    final List<Color?> columnColors = [null, null, null];
+    final columnCount = gameDifficulty.columnCount;
+    final minColors = gameDifficulty.minDeckTileColors;
+    final maxColors = gameDifficulty.maxDeckTileColors;
+
+    final numColoredColumns = random.nextInt(maxColors - minColors + 1) + minColors;
+    final List<Color?> columnColors = List.filled(columnCount, null);
 
     // Get random positions for colored columns
     final positions = <int>[];
     while (positions.length < numColoredColumns) {
-      final pos = random.nextInt(3);
+      final pos = random.nextInt(columnCount);
       if (!positions.contains(pos)) {
         positions.add(pos);
       }

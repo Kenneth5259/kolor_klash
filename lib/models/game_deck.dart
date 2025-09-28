@@ -1,4 +1,5 @@
 import 'game_tile.dart';
+import 'game_difficulty.dart';
 
 // Represents the game deck containing 3 game tiles
 class GameDeck {
@@ -8,13 +9,14 @@ class GameDeck {
     required this.tiles,
   });
 
-  // Create a new deck with 3 random tiles
-  factory GameDeck.newDeck() {
+  // Create a new deck with 3 random tiles based on difficulty
+  factory GameDeck.newDeck([GameDifficulty? difficulty]) {
+    final gameDifficulty = difficulty ?? GameDifficulty.normal;
     return GameDeck(
       tiles: [
-        GameTile.random('D1'),
-        GameTile.random('D2'),
-        GameTile.random('D3'),
+        GameTile.random('D1', gameDifficulty),
+        GameTile.random('D2', gameDifficulty),
+        GameTile.random('D3', gameDifficulty),
       ],
     );
   }
@@ -44,9 +46,9 @@ class GameDeck {
   int get tileCount => tiles.length;
 
   // Refill deck if empty (returns new deck with 3 fresh tiles)
-  GameDeck refillIfEmpty() {
+  GameDeck refillIfEmpty([GameDifficulty? difficulty]) {
     if (isEmpty) {
-      return GameDeck.newDeck();
+      return GameDeck.newDeck(difficulty);
     }
     return this;
   }

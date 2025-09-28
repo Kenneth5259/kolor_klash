@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/game_difficulty.dart';
 
 class SettingsService {
   static const String _musicKey = 'music_enabled';
@@ -6,6 +7,7 @@ class SettingsService {
   static const String _masterVolumeKey = 'master_volume';
   static const String _animationsKey = 'animations_enabled';
   static const String _languageKey = 'language';
+  static const String _difficultyKey = 'game_difficulty';
 
   static Future<bool> getMusicEnabled() async {
     final prefs = await SharedPreferences.getInstance();
@@ -57,12 +59,24 @@ class SettingsService {
     await prefs.setString(_languageKey, languageCode);
   }
 
+  static Future<GameDifficulty> getDifficulty() async {
+    final prefs = await SharedPreferences.getInstance();
+    final difficultyString = prefs.getString(_difficultyKey) ?? 'normal';
+    return GameDifficulty.fromString(difficultyString);
+  }
+
+  static Future<void> setDifficulty(GameDifficulty difficulty) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_difficultyKey, difficulty.name);
+  }
+
   static Future<Map<String, dynamic>> loadAllSettings() async {
     final musicEnabled = await getMusicEnabled();
     final soundEffectsEnabled = await getSoundEffectsEnabled();
     final masterVolume = await getMasterVolume();
     final animationsEnabled = await getAnimationsEnabled();
     final language = await getLanguage();
+    final difficulty = await getDifficulty();
 
     return {
       'musicEnabled': musicEnabled,
@@ -70,6 +84,7 @@ class SettingsService {
       'masterVolume': masterVolume,
       'animationsEnabled': animationsEnabled,
       'language': language,
+      'difficulty': difficulty,
     };
   }
 }
